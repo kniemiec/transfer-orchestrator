@@ -1,0 +1,20 @@
+{
+  "senderId": "senderId",
+  "recipientId": "recipientId",
+  "senderAddress": {
+    "street": "Aleja",
+    "city": "Krakow",
+    "postalCode": "małopolskie",
+    "country": "Polska"
+  },
+  "recipientAddress": {
+    "street": "Aleja",
+    "city": "Krakow",
+    "postalCode": "małopolskie",
+    "country": "Polska"
+  },
+  "money": {
+    "currency": "PLN",
+    "value": 100.00
+  }
+}

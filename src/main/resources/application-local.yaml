@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  data:
+    mongodb:
+      username: root
+      password: example
+      uri: mongodb://user:user@localhost:27017
+
+payin:
+  url: "http://localhost:8090/lock"
+payout:
+  baseUrl: "http://localhost:8091"
+  path:
+    topup: "/v1/topup"
+    stream: "/v1/topups/stream"

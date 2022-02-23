@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:example@mongo:27017
+
+payout:
+  baseUrl: "http://payout:8091"
+  path:
+    topup: "/v1/topup"
+    stream: "/v1/topups/stream"

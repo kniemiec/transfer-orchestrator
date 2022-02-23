@@ -1,0 +1,17 @@
+spring:
+  mongodb:
+    embedded:
+      version: 3.3.1
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: local
+
+payin:
+  url: "http://localhost:8090/lock"
+payout:
+  baseUrl: "http://localhost:8090"
+  path:
+    topup: "/v1/topup"
+    stream: "/v1/topups/stream"
