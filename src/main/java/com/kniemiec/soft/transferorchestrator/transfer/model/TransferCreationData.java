@@ -33,7 +33,8 @@ public class TransferCreationData {
                 this.getSenderAddress(),
                 this.getRecipientAddress(),
                 this.getMoney(),
-                Status.CREATED
+                Status.CREATED,
+                null
         );
     }
 }

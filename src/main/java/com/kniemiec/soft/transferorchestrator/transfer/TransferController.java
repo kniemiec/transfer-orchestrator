@@ -1,6 +1,5 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
-import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatusData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
@@ -31,18 +30,11 @@ public class TransferController {
         this.transferDataSink = transferDataSink;
     }
 
-    @PostMapping(value = "/start-transfer")
-    @ResponseStatus(HttpStatus.CREATED)
-    Mono<UUID> startTransfer(@RequestBody @Valid TransferCreationData transferCreationData){
-        logger.info("Received data: {}", transferCreationData);
-        return transferOrchestrator.startTransfer(transferCreationData);
-    }
-
     @PostMapping(value = "/v2/start-transfer")
     @ResponseStatus(HttpStatus.CREATED)
     Mono<UUID> startTransferV2(@RequestBody @Valid TransferCreationData transferCreationData){
         logger.info("Alternative start transfer: {}", transferCreationData);
-        return transferOrchestrator.alternativeStartTransfer(transferCreationData);
+        return transferOrchestrator.startTransfer(transferCreationData);
     }
 
     @GetMapping(value = "/transfer-status/{transferId}")

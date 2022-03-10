@@ -19,9 +19,24 @@ public class MockData {
                 new Address("Kanadyjska", "Zielonki", "32-087", "Poland"),
                 new Address("Kołłątajowskiej", "Krakóœ", "31-234", "Poland"),
                 new Money("CHF", BigDecimal.valueOf(1000)),
-               Status.CREATED
+               Status.CREATED,
+               null
         );
     }
+
+    public static TransferData mockTransferData(UUID transferId, UUID captureId){
+        return new TransferData(
+                transferId.toString(),
+                "senderId",
+                "recipientId",
+                new Address("Kanadyjska", "Zielonki", "32-087", "Poland"),
+                new Address("Kołłątajowskiej", "Krakóœ", "31-234", "Poland"),
+                new Money("CHF", BigDecimal.valueOf(1000)),
+                Status.CREATED,
+                captureId.toString()
+        );
+    }
+
 
     public static TransferData mockTransferData(){
         UUID transferId = UUID.randomUUID();

@@ -16,7 +16,6 @@ public class TransferData {
     @Id
     String transferId;
 
-
     String senderId;
 
     String recipientId;
@@ -28,6 +27,8 @@ public class TransferData {
 
     Status status;
 
+    String captureId = null;
+
     public TransferData withStatus(Status newStatus){
         return new TransferData(
             this.transferId,
@@ -36,7 +37,8 @@ public class TransferData {
             this.senderAddress,
             this.recipientAddress,
             this.getMoney(),
-            newStatus
+            newStatus,
+                null
         );
     }
 

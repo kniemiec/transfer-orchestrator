@@ -1,18 +1,16 @@
 package com.kniemiec.soft.transferorchestrator.payin.model;
 
-import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LockResponse {
-
+@AllArgsConstructor
+public class CaptureRequest {
     String lockId;
 
-    Money money;
-
-    LockStatus status;
+    public static CaptureRequest from(String lockId) {
+        return new CaptureRequest(lockId);
+    }
 }

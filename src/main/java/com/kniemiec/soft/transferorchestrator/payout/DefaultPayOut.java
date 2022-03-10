@@ -8,6 +8,7 @@ import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Sinks;
 import java.util.UUID;
 
 @Slf4j
+@Service
 public class DefaultPayOut implements PayOut {
 
     @Value("${payout.baseUrl}")

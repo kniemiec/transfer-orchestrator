@@ -15,7 +15,7 @@ import reactor.core.publisher.Sinks;
 
 //@Configuration
 @Slf4j
-@Component
+//@Component
 public class TopUpStatusClientRunner implements ApplicationRunner {
 
     WebClient payOutWebClient;

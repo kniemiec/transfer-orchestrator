@@ -4,6 +4,7 @@ public enum Status {
     INITIALIZATION_FAILED,
     CREATED,
     LOCKED,
+    CAPTURED,
     TOP_UP_STARTED,
     COMPLETED
 }

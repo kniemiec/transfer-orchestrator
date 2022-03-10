@@ -9,7 +9,11 @@ spring:
       database: local
 
 payin:
-  url: "http://localhost:8090/lock"
+  lock:
+    url: "http://payin:8090/lock"
+  capture:
+    url: "http://payin:8090/capture"
+
 payout:
   baseUrl: "http://localhost:8090"
   path:

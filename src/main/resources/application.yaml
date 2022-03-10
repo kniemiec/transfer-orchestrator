@@ -1,7 +1,9 @@
-
-
 payin:
-  url: "http://localhost:8090/lock"
+  lock:
+    url: "http://localhost:8090/lock"
+  capture:
+    url: "http://localhost:8090/capture"
+
 payout:
   baseUrl: "http://localhost:8091"
   path:

@@ -3,6 +3,12 @@ spring:
     mongodb:
       uri: mongodb://root:example@mongo:27017
 
+payin:
+  lock:
+    url: "http://payin:8090/lock"
+  capture:
+    url: "http://payin:8090/capture"
+
 payout:
   baseUrl: "http://payout:8091"
   path:

@@ -19,11 +19,6 @@ public class PayoutConfiguration {
     }
 
     @Bean
-    public PayOut payOut(WebClient payOutWebClient, Sinks.Many<TransferData> sink){
-        return new DefaultPayOut(payOutWebClient, sink);
-    }
-
-    @Bean
     public Sinks.Many<TransferData> getTransferDataSink(){
         return Sinks.many().replay().all();
     }

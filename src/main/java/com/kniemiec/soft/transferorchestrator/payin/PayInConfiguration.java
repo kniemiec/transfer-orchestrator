@@ -14,8 +14,4 @@ public class PayInConfiguration {
         return builder.build();
     }
 
-    @Bean
-    public PayIn payIn(WebClient webClient){
-        return new DefaultPayIn(webClient);
-    }
 }
