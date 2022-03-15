@@ -7,5 +7,5 @@ import reactor.core.publisher.Mono;
 
 public interface DataTransferRepository extends ReactiveMongoRepository<TransferData,String> {
 
-    Mono<TransferData> findByCaptureId(String lockId);
+    Mono<TransferData> findByLockId(String lockId);
 }

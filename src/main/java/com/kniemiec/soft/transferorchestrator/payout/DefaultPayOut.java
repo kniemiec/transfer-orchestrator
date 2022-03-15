@@ -6,6 +6,7 @@ import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import com.kniemiec.soft.transferorchestrator.payout.model.TopUpResponse;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,12 +29,12 @@ public class DefaultPayOut implements PayOut {
     @Value("${payout.path.stream}")
     public String streamPath;
 
-    WebClient payOutWebClient;
+    private WebClient payOutWebClient;
 
-
-    public DefaultPayOut(WebClient webClient,
+    @Autowired
+    public DefaultPayOut(WebClient payOutWebClient,
                          Sinks.Many<TransferData> sink){
-        this.payOutWebClient = webClient;
+        this.payOutWebClient = payOutWebClient;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class TransferStatus {
     public static TransferStatus from(TransferData transferData){
         return new TransferStatus(
                 UUID.fromString(transferData.getTransferId()),
-                Status.CREATED
+                transferData.getStatus()
         );
     }
 }

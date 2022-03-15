@@ -1,6 +1,6 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
-import com.kniemiec.soft.transferorchestrator.payin.PayIn;
+import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscriber;
@@ -14,20 +14,33 @@ public class PayInProcessor {
 
     private Sinks.Many<LockResponse> lockResponses;
 
+    private Sinks.Many<CaptureResponse> captureResponses;
+
+
     public void onLockResponseReceived(Subscriber<LockResponse> subscriber){
         log.info("onLockResponseReceived called");
         lockResponses.asFlux().subscribe(subscriber);
     }
 
     public PayInProcessor(){
+        this.captureResponses = Sinks.many().replay().latest();
         this.lockResponses = Sinks.many().replay().latest();
     }
 
-    public void tryEmitNext(LockResponse lockResponse){
+    public void addToQueue(LockResponse lockResponse){
         lockResponses.tryEmitNext(lockResponse);
     }
 
-    public Flux<LockResponse> exposeFlux(){
+
+    public void addToQueue(CaptureResponse captureResponse){
+        captureResponses.tryEmitNext(captureResponse);
+    }
+
+    public Flux<LockResponse> exposeLockQueue(){
+        return lockResponses.asFlux();
+    }
+
+    public Flux<LockResponse> exposeCaptureQueue(){
         return lockResponses.asFlux();
     }
 }

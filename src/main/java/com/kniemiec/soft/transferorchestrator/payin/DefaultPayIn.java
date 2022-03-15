@@ -3,8 +3,11 @@ package com.kniemiec.soft.transferorchestrator.payin;
 import com.kniemiec.soft.transferorchestrator.payin.model.*;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -21,11 +24,11 @@ public class DefaultPayIn implements PayIn {
     @Value("${payin.capture.url}")
     private String captureUrl;
 
-
     private WebClient payInWebClient;
 
-    public DefaultPayIn(WebClient webClient){
-        payInWebClient = webClient;
+    @Autowired
+    public DefaultPayIn(WebClient payInWebClient){
+        this.payInWebClient = payInWebClient;
     }
 
     @Override
@@ -36,14 +39,12 @@ public class DefaultPayIn implements PayIn {
                 .uri(lockUrl)
                 .bodyValue(lockRequest)
                 .retrieve()
-                .bodyToMono(String.class)
-                .flatMap( response -> {
-                    LockStatus lockStatus = LockStatus.REJECTED;
-                    if (response.equals("OK")) {
-                        lockStatus = LockStatus.LOCKED;
-                    }
-                    return Mono.just(new LockResponse(senderId,money,lockStatus));
-                });
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                    log.warn("PayIn lock failed. Status code is: {}", clientResponse.statusCode().value());
+                    return clientResponse.bodyToMono(String.class)
+                            .flatMap( responseMessage -> Mono.just(null));
+                })
+                .bodyToMono(LockResponse.class);
     }
 
     @Override

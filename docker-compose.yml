@@ -16,6 +16,8 @@ services:
     image: payin
     ports:
       - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
 
   payout:
     image: payout

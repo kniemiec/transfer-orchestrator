@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class PayInConfiguration {
 
     @Bean
-    public WebClient webClient(WebClient.Builder builder) {
+    public WebClient payInWebClient(WebClient.Builder builder) {
         return builder.build();
     }
 

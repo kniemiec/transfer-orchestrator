@@ -1,5 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
+import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
+import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.payout.model.TopUpResponse;
@@ -71,9 +73,17 @@ public class MockData {
         );
     }
 
-    public static LockResponse mockLockResponseData(String senderId, Money money, LockStatus lockStatus) {
-        return new LockResponse(senderId, money, lockStatus);
+    public static LockResponse mockLockResponseData(String lockId, Money money, LockStatus lockStatus) {
+        return new LockResponse(lockId, money, lockStatus);
     }
+
+    public static CaptureResponse mockCaptureResponse(String lockId, CaptureStatus status) {
+        return new CaptureResponse(
+                lockId,
+                status
+        );
+    }
+
 
     public static TopUpResponse mockTopUpResponseData(String recipientId, Money money, TopUpStatus topUpStatus) {
         return new TopUpResponse(
