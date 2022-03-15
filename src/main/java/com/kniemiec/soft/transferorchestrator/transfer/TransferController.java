@@ -23,11 +23,8 @@ public class TransferController {
 
     private Orchestrator transferOrchestrator;
 
-    private Sinks.Many<TransferData> transferDataSink;
-
-    public TransferController(Orchestrator orchestrator, Sinks.Many<TransferData> transferDataSink){
+    public TransferController(Orchestrator orchestrator){
         this.transferOrchestrator = orchestrator;
-        this.transferDataSink = transferDataSink;
     }
 
     @PostMapping(value = "/v2/start-transfer")
@@ -43,9 +40,9 @@ public class TransferController {
     }
 
 
-    @GetMapping(value = "/v1/transfers/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(value = "/v2/transfers/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
     Flux<TransferStatus> getTransferData(){
-        return transferDataSink.asFlux()
-                .map( topUpStatusData -> TransferStatus.from(topUpStatusData));
+        return transferOrchestrator.getStreamOfData()
+                .map( transferData -> TransferStatus.from(transferData));
     }
 }

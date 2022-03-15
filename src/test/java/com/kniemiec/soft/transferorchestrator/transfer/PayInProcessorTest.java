@@ -3,7 +3,6 @@ package com.kniemiec.soft.transferorchestrator.transfer;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscriber;
@@ -29,9 +28,9 @@ class PayInProcessorTest {
     void tryEmitNext() {
         payInProcessor.onLockResponseReceived(getMockSubscriber());
 
-        payInProcessor.tryEmitNext(new LockResponse("1", new Money("PLN", BigDecimal.valueOf(100)), LockStatus.LOCKED));
-        payInProcessor.tryEmitNext(new LockResponse("2", new Money("PLN", BigDecimal.valueOf(100)), LockStatus.LOCKED));
-        payInProcessor.tryEmitNext(new LockResponse("3", new Money("PLN", BigDecimal.valueOf(100)), LockStatus.LOCKED));
+        payInProcessor.addToQueue(new LockResponse("1", new Money("PLN", BigDecimal.valueOf(100)), LockStatus.LOCKED));
+        payInProcessor.addToQueue(new LockResponse("2", new Money("PLN", BigDecimal.valueOf(100)), LockStatus.LOCKED));
+        payInProcessor.addToQueue(new LockResponse("3", new Money("PLN", BigDecimal.valueOf(100)), LockStatus.LOCKED));
 
         assertEquals(3, counter);
 

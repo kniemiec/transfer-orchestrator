@@ -2,6 +2,7 @@ package com.kniemiec.soft.transferorchestrator;
 
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,9 +18,7 @@ public class ReactiveMongodbConfiguration extends AbstractReactiveMongoConfigura
     String mongoUri;
 
     @Override
-    public MongoClient reactiveMongoClient() {
-        return MongoClients.create(mongoUri);
-    }
+    public MongoClient reactiveMongoClient() { return MongoClients.create(mongoUri); }
 
     @Override
     protected String getDatabaseName() {

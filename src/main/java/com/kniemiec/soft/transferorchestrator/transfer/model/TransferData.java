@@ -1,6 +1,5 @@
 package com.kniemiec.soft.transferorchestrator.transfer.model;
 
-import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatusData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,7 +26,7 @@ public class TransferData {
 
     Status status;
 
-    String captureId = null;
+    String lockId = null;
 
     public TransferData withStatus(Status newStatus){
         return new TransferData(
@@ -38,7 +37,20 @@ public class TransferData {
             this.recipientAddress,
             this.getMoney(),
             newStatus,
-                null
+                this.lockId
+        );
+    }
+
+    public TransferData withLockId(String lockId){
+        return new TransferData(
+                this.transferId,
+                this.senderId,
+                this.recipientId,
+                this.senderAddress,
+                this.recipientAddress,
+                this.getMoney(),
+                this.status,
+                lockId
         );
     }
 

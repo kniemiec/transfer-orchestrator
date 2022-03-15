@@ -10,9 +10,9 @@ spring:
 
 payin:
   lock:
-    url: "http://payin:8090/lock"
+    url: "http://localhost:8090/lock"
   capture:
-    url: "http://payin:8090/capture"
+    url: "http://localhost:8090/capture"
 
 payout:
   baseUrl: "http://localhost:8090"

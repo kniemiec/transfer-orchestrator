@@ -13,7 +13,6 @@ import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -48,13 +47,14 @@ public class OrchestratorTest {
         orchestrator = new Orchestrator(
                 payIn,
                 payOut,
-                dataTransferRepository,
-                new PayInProcessor()
+                new TransferProcessor(),
+                new PayInProcessor(),
+                dataTransferRepository
         );
     }
 
     @Test
-    public void callCreateTransferAlternative(){
+    public void callCreateTransfer(){
         // given
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
         UUID expectedTransferId = UUID.randomUUID();
@@ -65,7 +65,7 @@ public class OrchestratorTest {
                 .thenReturn(Mono.just(new CaptureResponse(lockId.toString(), CaptureStatus.CAPTURED)));
         when(dataTransferRepository.save(any()))
                 .thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
-        when(dataTransferRepository.findByCaptureId(lockId.toString()))
+        when(dataTransferRepository.findByLockId(lockId.toString()))
                 .thenReturn(Mono.just(MockData.mockTransferData(expectedTransferId, lockId)));
 
         // when
@@ -77,7 +77,7 @@ public class OrchestratorTest {
                 .verifyComplete();
         verify(payIn).lock(transferCreationData.getMoney(), transferCreationData.getSenderId());
         verify(payIn).capture(lockId.toString());
-        verify(dataTransferRepository).findByCaptureId(lockId.toString());
+        verify(dataTransferRepository).findByLockId(lockId.toString());
         verify(dataTransferRepository, times(3)).save(any());
     }
 
@@ -155,19 +155,5 @@ public class OrchestratorTest {
                 .verifyComplete();
         verify(dataTransferRepository).findById(transferId.toString());
 
-    }
-}
-
-
-class TransferDataMatcher implements ArgumentMatcher<TransferData>{
-    private TransferData left;
-
-    public TransferDataMatcher(TransferData left){
-        this.left = left;
-    }
-
-    @Override
-    public boolean matches(TransferData right){
-        return left.getTransferId().equals(right.getTransferId());
     }
 }

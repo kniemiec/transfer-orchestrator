@@ -3,13 +3,11 @@ package com.kniemiec.soft.transferorchestrator.transfer;
 
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;
-import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
 import reactor.test.StepVerifier;
 
 import java.util.UUID;
@@ -22,13 +20,10 @@ public class TransferControllerTest {
 
     private Orchestrator orchestrator;
 
-    private Sinks.Many<TransferData> sink;
-
     @BeforeEach
     void setUp(){
         orchestrator = Mockito.mock(Orchestrator.class);
-        sink = Mockito.mock(Sinks.Many.class);
-        transferController = new TransferController(orchestrator, sink);
+        transferController = new TransferController(orchestrator);
     }
 
 
@@ -49,7 +44,6 @@ public class TransferControllerTest {
     @Test
     public void callOrchestratorWhenCheckingTransfer(){
         UUID transferId = UUID.randomUUID();
-        TransferCreationData transferCreationData = MockData.mockTransferCreationData();
 
         Mockito.when(orchestrator.getTransferStatus(transferId)).thenReturn(Mono.just(MockData.mockTransferStatusData(transferId)));
 
