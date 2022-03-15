@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
+import java.util.concurrent.locks.Lock;
+
 @Slf4j
 @Service
 public class PayInProcessor {
@@ -27,13 +29,15 @@ public class PayInProcessor {
         this.lockResponses = Sinks.many().replay().latest();
     }
 
-    public void addToQueue(LockResponse lockResponse){
+    public LockResponse addToQueue(LockResponse lockResponse){
         lockResponses.tryEmitNext(lockResponse);
+        return lockResponse;
     }
 
 
-    public void addToQueue(CaptureResponse captureResponse){
+    public CaptureResponse addToQueue(CaptureResponse captureResponse){
         captureResponses.tryEmitNext(captureResponse);
+        return captureResponse;
     }
 
     public Flux<LockResponse> exposeLockQueue(){

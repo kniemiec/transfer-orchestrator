@@ -34,7 +34,7 @@ public class TransferControllerTest {
 
         Mockito.when(orchestrator.startTransfer(any())).thenReturn(Mono.just(newTransferId));
 
-        Mono<UUID> transferIdResponse = transferController.startTransferV2(transferCreationData);
+        Mono<UUID> transferIdResponse = transferController.startTransfer(transferCreationData);
         StepVerifier.create(transferIdResponse)
                         .expectNextMatches(transferId -> transferId.equals(newTransferId))
                                 .verifyComplete();

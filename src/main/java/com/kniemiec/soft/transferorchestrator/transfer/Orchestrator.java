@@ -15,15 +15,15 @@ import java.util.UUID;
 @Service
 public class Orchestrator {
 
-    private PayIn payin;
+    private final PayIn payin;
 
-    private PayOut payout;
+    private final PayOut payout;
 
-    private PayInProcessor payInProcessor;
+    private final PayInProcessor payInProcessor;
 
-    private TransferProcessor transferProcessor;
+    private final TransferProcessor transferProcessor;
 
-    private DataTransferRepository dataTransferRepository;
+    private final DataTransferRepository dataTransferRepository;
 
     public Orchestrator(PayIn payin, PayOut payout, TransferProcessor transferProcessor, PayInProcessor payInProcessor,
                         DataTransferRepository dataTransferRepository) {
@@ -33,20 +33,14 @@ public class Orchestrator {
         this.payInProcessor = payInProcessor;
         this.dataTransferRepository = dataTransferRepository;
 
-//        this.transferProcessor.exposeQueue().subscribe(dataTransferRepository::save);
-
         this.payInProcessor.exposeLockQueue().subscribe(lockResponse -> {
-            log.info("handling lockId: {}",lockResponse.getLockId());
+            log.info("handling Capture command for lockId: {}",lockResponse.getLockId());
             payin.capture(lockResponse.getLockId())
-                    .map( captureResponse -> {
-                        payInProcessor.addToQueue(captureResponse);
-                        return captureResponse;
-                    })
-                    .flatMap(captureResponse -> dataTransferRepository.findByLockId(captureResponse.getLockId())
-                            .map(transferData -> transferData.withStatus(Status.CAPTURED))
-                    )
-                    .flatMap(transferData -> dataTransferRepository.save(transferData))
-                    .subscribe(dataTransfer -> transferProcessor.addToQueue(dataTransfer));
+                    .map(payInProcessor::addToQueue)
+                    .flatMap(captureResponse -> dataTransferRepository.findByLockId(captureResponse.getLockId()))
+                    .map(transferData -> transferData.withStatus(Status.CAPTURED))
+                    .flatMap(dataTransferRepository::save)
+                    .subscribe(transferProcessor::addToQueue);
         });
 
         this.payInProcessor.exposeCaptureQueue().subscribe(captureResponse -> {
@@ -58,25 +52,23 @@ public class Orchestrator {
     public Mono<UUID> startTransfer(TransferCreationData transferCreationData){
         UUID transferId = UUID.randomUUID();
         return dataTransferRepository
-                .save(transferCreationData.toNewTransferData(transferId))
-                .flatMap( transferData -> payin.lock(transferData.getMoney(), transferData.getSenderId())
-                        .log()
-                        .flatMap(lockResponse -> {
-                            if (lockResponse.getStatus().equals(LockStatus.LOCKED)) {
-                                log.info("received lockId: {}",lockResponse.getLockId());
-                                payInProcessor.addToQueue(lockResponse);
-                                TransferData newTransferData = transferData.withStatus(Status.LOCKED).withLockId(lockResponse.getLockId());
-                                dataTransferRepository.save(newTransferData).subscribe(transferProcessor::addToQueue);
-                                return Mono.just(UUID.fromString(newTransferData.getTransferId()));
-                            } else {
-                                return Mono.error(new TransferInitializationFailedException("Unable to initialize transfer for sender: " + transferData.getSenderId()));
-                            }
-                        }));
+                .insert(transferCreationData.toNewTransferData(transferId))
+                .flatMap(transferData -> payin.lock(transferData.getMoney(), transferData.getSenderId())
+                        .filter(lockResponse -> lockResponse.getStatus().equals(LockStatus.LOCKED))
+                        .map(payInProcessor::addToQueue)
+                        .map(lockResponse -> transferData.withStatus(Status.LOCKED).withLockId(lockResponse.getLockId())))
+                        .flatMap(dataTransferRepository::save)
+                        .map(transferProcessor::addToQueue)
+                        .flatMap( saved ->
+                            Mono.just(UUID.fromString(saved.getTransferId()))
+                        )
+                        .switchIfEmpty(Mono.error(new TransferInitializationFailedException("Unable to initialize transfer for sender: " + transferCreationData.getSenderId()))
+                );
     }
 
     public Mono<TransferStatus> getTransferStatus(UUID transferId) {
         Mono<TransferData> transferData = dataTransferRepository.findById(transferId.toString());
-        return transferData.map(transferData1 -> TransferStatus.from(transferData1));
+        return transferData.map(TransferStatus::from);
     }
 
     public Flux<TransferData> getStreamOfData(){
