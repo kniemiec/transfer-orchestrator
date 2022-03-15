@@ -14,8 +14,9 @@ public class TransferProcessor {
         transfers = Sinks.many().replay().latest();
     }
 
-    public void addToQueue(TransferData transferData){
+    public TransferData addToQueue(TransferData transferData){
         transfers.tryEmitNext(transferData);
+        return transferData;
     }
 
     public Flux<TransferData> exposeQueue(){
