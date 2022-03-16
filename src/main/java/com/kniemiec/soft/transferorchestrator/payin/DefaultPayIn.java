@@ -3,7 +3,6 @@ package com.kniemiec.soft.transferorchestrator.payin;
 import com.kniemiec.soft.transferorchestrator.payin.model.*;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +41,7 @@ public class DefaultPayIn implements PayIn {
                 .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
                     log.warn("PayIn lock failed. Status code is: {}", clientResponse.statusCode().value());
                     return clientResponse.bodyToMono(String.class)
-                            .flatMap( responseMessage -> Mono.just(null));
+                            .flatMap( responseMessage -> Mono.just(new Exception("Invalid request, statusCode: ")));
                 })
                 .bodyToMono(LockResponse.class);
     }

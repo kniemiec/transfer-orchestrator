@@ -19,43 +19,40 @@ public class Orchestrator {
 
     private final PayOut payout;
 
-    private final PayInProcessor payInProcessor;
-
     private final TransferProcessor transferProcessor;
 
     private final DataTransferRepository dataTransferRepository;
 
-    public Orchestrator(PayIn payin, PayOut payout, TransferProcessor transferProcessor, PayInProcessor payInProcessor,
+    public Orchestrator(PayIn payin, PayOut payout, TransferProcessor transferProcessor,
                         DataTransferRepository dataTransferRepository) {
         this.payin = payin;
         this.payout = payout;
         this.transferProcessor = transferProcessor;
-        this.payInProcessor = payInProcessor;
         this.dataTransferRepository = dataTransferRepository;
 
-        this.payInProcessor.exposeLockQueue().subscribe(lockResponse -> {
-            log.info("handling Capture command for lockId: {}",lockResponse.getLockId());
-            payin.capture(lockResponse.getLockId())
-                    .map(payInProcessor::addToQueue)
-                    .flatMap(captureResponse -> dataTransferRepository.findByLockId(captureResponse.getLockId()))
-                    .map(transferData -> transferData.withStatus(Status.CAPTURED))
-                    .flatMap(dataTransferRepository::save)
-                    .subscribe(transferProcessor::addToQueue);
-        });
+        this.transferProcessor.exposeQueue()
+                .filter( transferData -> transferData.getStatus().equals(Status.LOCKED))
+                .subscribe( lockedTransfer -> payin.capture(lockedTransfer.getLockId())
+                        .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while capturing transfer "+lockedTransfer.getTransferId())))
+                        .map(newTransferData -> lockedTransfer.withStatus(Status.CAPTURED))
+                        .flatMap(dataTransferRepository::save)
+                        .subscribe(transferProcessor::addToQueue));
 
-        this.payInProcessor.exposeCaptureQueue().subscribe(captureResponse -> {
-            log.info("handling capture for lockId: {}", captureResponse.getLockId());
-            log.info("it means sending topup somewhere.");
-        });
+        this.transferProcessor.exposeQueue()
+                .filter( transferData -> transferData.getStatus().equals(Status.CAPTURED))
+                .subscribe( capturedTransfer -> payout.topUp(capturedTransfer.getMoney(), capturedTransfer.getTransferId(), capturedTransfer.getSenderId(), capturedTransfer.getRecipientId())
+                        .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while topping up transfer "+capturedTransfer.getTransferId())))
+                        .map(newTransferData -> capturedTransfer.withStatus(Status.TOP_UP_STARTED))
+                        .flatMap(dataTransferRepository::save)
+                        .subscribe(transferProcessor::addToQueue));
     }
 
     public Mono<UUID> startTransfer(TransferCreationData transferCreationData){
         UUID transferId = UUID.randomUUID();
         return dataTransferRepository
-                .insert(transferCreationData.toNewTransferData(transferId))
+                .save(transferCreationData.toNewTransferData(transferId))
                 .flatMap(transferData -> payin.lock(transferData.getMoney(), transferData.getSenderId())
                         .filter(lockResponse -> lockResponse.getStatus().equals(LockStatus.LOCKED))
-                        .map(payInProcessor::addToQueue)
                         .map(lockResponse -> transferData.withStatus(Status.LOCKED).withLockId(lockResponse.getLockId())))
                         .flatMap(dataTransferRepository::save)
                         .map(transferProcessor::addToQueue)

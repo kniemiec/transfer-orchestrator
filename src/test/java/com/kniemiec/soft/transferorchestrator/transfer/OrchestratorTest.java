@@ -2,8 +2,6 @@ package com.kniemiec.soft.transferorchestrator.transfer;
 
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.PayOutClientException;
-import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
-import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.payout.PayOut;
@@ -48,7 +46,6 @@ public class OrchestratorTest {
                 payIn,
                 payOut,
                 new TransferProcessor(),
-                new PayInProcessor(),
                 dataTransferRepository
         );
     }
@@ -60,13 +57,9 @@ public class OrchestratorTest {
         UUID expectedTransferId = UUID.randomUUID();
         UUID lockId = UUID.randomUUID();
         when(payIn.lock(isA(Money.class),isA(String.class)))
-                .thenReturn(Mono.just(new LockResponse(lockId.toString(),transferCreationData.getMoney(),LockStatus.LOCKED)));
-        when(payIn.capture(lockId.toString()))
-                .thenReturn(Mono.just(new CaptureResponse(lockId.toString(), CaptureStatus.CAPTURED)));
+                .thenReturn(Mono.just(new LockResponse(lockId.toString(),LockStatus.LOCKED)));
         when(dataTransferRepository.save(any()))
                 .thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
-        when(dataTransferRepository.findByLockId(lockId.toString()))
-                .thenReturn(Mono.just(MockData.mockTransferData(expectedTransferId, lockId)));
 
         // when
         Mono<UUID> transferIdMono = orchestrator.startTransfer(transferCreationData);
@@ -76,9 +69,7 @@ public class OrchestratorTest {
                 .expectNext(expectedTransferId)
                 .verifyComplete();
         verify(payIn).lock(transferCreationData.getMoney(), transferCreationData.getSenderId());
-        verify(payIn).capture(lockId.toString());
-        verify(dataTransferRepository).findByLockId(lockId.toString());
-        verify(dataTransferRepository, times(3)).save(any());
+        verify(dataTransferRepository, times(2)).save(any());
     }
 
     @Test
@@ -87,10 +78,8 @@ public class OrchestratorTest {
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
         UUID expectedTransferId = UUID.randomUUID();
         UUID lockId = UUID.randomUUID();
-        when(payIn.lock(isA(Money.class),isA(String.class)))
-                .thenReturn(Mono.just(new LockResponse(lockId.toString(),transferCreationData.getMoney(),LockStatus.REJECTED)));
         when(payIn.lock(eq(transferCreationData.getMoney()),eq(transferCreationData.getSenderId())))
-                .thenReturn(Mono.just(new LockResponse(lockId.toString(),transferCreationData.getMoney(),LockStatus.REJECTED)));
+                .thenReturn(Mono.just(new LockResponse(lockId.toString(),LockStatus.REJECTED)));
         when(dataTransferRepository.save(any()))
                 .thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
 
@@ -112,7 +101,7 @@ public class OrchestratorTest {
     public void callCreateTransferWhenPayOutNotFound(){
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
         UUID expectedTransferId = UUID.randomUUID();
-        when(payIn.lock(isA(Money.class),isA(String.class))).thenReturn(Mono.just(new LockResponse(expectedTransferId.toString(),transferCreationData.getMoney(),LockStatus.LOCKED)));
+        when(payIn.lock(isA(Money.class),isA(String.class))).thenReturn(Mono.just(new LockResponse(expectedTransferId.toString(),LockStatus.LOCKED)));
         when(payOut.topUp(isA(Money.class), eq(expectedTransferId.toString()),eq(transferCreationData.getSenderId()), eq(transferCreationData.getRecipientId())))
                 .thenReturn(Mono.error(new PayOutClientException("Exception in Payout Service", HttpStatus.NOT_FOUND_404)));
         when(dataTransferRepository.save(any())).thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
@@ -130,7 +119,7 @@ public class OrchestratorTest {
     public void callCreateTransferWhenPayoutFails(){
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
         UUID expectedTransferId = UUID.randomUUID();
-        when(payIn.lock(isA(Money.class),isA(String.class))).thenReturn(Mono.just(new LockResponse(expectedTransferId.toString(),transferCreationData.getMoney(),LockStatus.LOCKED)));
+        when(payIn.lock(isA(Money.class),isA(String.class))).thenReturn(Mono.just(new LockResponse(expectedTransferId.toString(),LockStatus.LOCKED)));
         when(payOut.topUp(isA(Money.class), eq(expectedTransferId.toString()),eq(transferCreationData.getSenderId()), eq(transferCreationData.getRecipientId())))
                 .thenReturn(Mono.just(new TopUpResponse(transferCreationData.getRecipientId(), transferCreationData.getMoney(),
                         TopUpStatus.RETURNED)));
