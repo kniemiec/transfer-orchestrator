@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TopUpResponse {
 
-    String recipientId;
+    String transferId;
 
     Money money;
 
     TopUpStatus status;
 
     public static TopUpResponse from(TopUpStatusData topUpStatusData){
-        return new TopUpResponse(topUpStatusData.getRecipientId(),
+        return new TopUpResponse(topUpStatusData.getId(),
                 topUpStatusData.getMoney(),
                 topUpStatusData.getStatus());
     }

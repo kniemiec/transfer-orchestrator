@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LockRequest {
 
-    String senderId;
-
+    String transferId;
     Money money;
 
-    public static LockRequest from(Money money, String senderId) {
-        return new LockRequest(senderId,money);
+    public static LockRequest from(Money money, String transferId) {
+        return new LockRequest(transferId,money);
     }
 }

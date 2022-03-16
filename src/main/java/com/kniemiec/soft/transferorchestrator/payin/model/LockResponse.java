@@ -1,6 +1,5 @@
 package com.kniemiec.soft.transferorchestrator.payin.model;
 
-import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +10,5 @@ import lombok.NoArgsConstructor;
 public class LockResponse {
 
     String lockId;
-
-    Money money;
-
     LockStatus status;
 }

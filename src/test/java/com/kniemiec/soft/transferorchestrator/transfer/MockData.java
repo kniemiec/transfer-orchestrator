@@ -69,12 +69,12 @@ public class MockData {
                 new Address("Kanadyjska", "Zielonki", "32-087", "Poland"),
                 new Address("Kołłątajowskiej", "Krakóœ", "31-234", "Poland"),
                 // TODO - why this is 'valid'
-                new Money("", new BigDecimal(0.0))
+                new Money("", BigDecimal.valueOf(0))
         );
     }
 
-    public static LockResponse mockLockResponseData(String lockId, Money money, LockStatus lockStatus) {
-        return new LockResponse(lockId, money, lockStatus);
+    public static LockResponse mockLockResponseData(String lockId, LockStatus lockStatus) {
+        return new LockResponse(lockId, lockStatus);
     }
 
     public static CaptureResponse mockCaptureResponse(String lockId, CaptureStatus status) {
@@ -85,9 +85,9 @@ public class MockData {
     }
 
 
-    public static TopUpResponse mockTopUpResponseData(String recipientId, Money money, TopUpStatus topUpStatus) {
+    public static TopUpResponse mockTopUpResponseData(String transferId, Money money, TopUpStatus topUpStatus) {
         return new TopUpResponse(
-                recipientId,
+                transferId,
                 money,
                 topUpStatus
         );
