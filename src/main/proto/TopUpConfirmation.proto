@@ -1,0 +1,21 @@
+syntax = 'proto3';
+
+package com.kniemiec.soft.transferorchestrator;
+
+option java_multiple_files = true;
+option java_package = "com.kniemiec.soft.transferorchestrator.topup";
+option java_outer_classname = "HelloWorldProto";
+
+service TopUpConfirmationService {
+  rpc topUpCompleted(TopUpRequest) returns (TopUpResponse){
+  }
+}
+
+message TopUpRequest {
+  string transferId = 1;
+  string status = 2;
+}
+
+message TopUpResponse {
+  string transferId = 1;
+}

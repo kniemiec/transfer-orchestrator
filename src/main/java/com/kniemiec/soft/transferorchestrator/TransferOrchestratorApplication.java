@@ -1,11 +1,14 @@
 package com.kniemiec.soft.transferorchestrator;
 
+import com.kniemiec.soft.transferorchestrator.confirmation.TopUpConfirmationServiceImpl;
 import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Address;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
+import io.grpc.Server;
+import io.grpc.ServerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,6 +18,7 @@ import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguratio
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 import reactor.core.publisher.Flux;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -58,8 +62,16 @@ public class TransferOrchestratorApplication {
 //                .subscribe( null, null, () -> System.out.println("Initialization done"));
 //    }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, InterruptedException {
+
         SpringApplication.run(TransferOrchestratorApplication.class, args);
+
+        Server server = ServerBuilder
+                .forPort(9090)
+                .addService(new TopUpConfirmationServiceImpl()).build();
+
+        server.start();
+        server.awaitTermination();
     }
 
 }
