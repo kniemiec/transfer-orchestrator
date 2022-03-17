@@ -6,6 +6,7 @@ services:
     build: .
     ports:
       - "8080:8080"
+      - "9090:9090"
     environment:
       SPRING_PROFILES_ACTIVE: dev
     depends_on:
