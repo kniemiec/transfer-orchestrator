@@ -1,5 +1,6 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
+import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.PayOutClientException;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
@@ -11,9 +12,8 @@ import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import wiremock.org.eclipse.jetty.http.HttpStatus;
@@ -25,8 +25,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-@SpringBootTest
-@ActiveProfiles("test")
 public class OrchestratorTest {
 
     Orchestrator orchestrator;
@@ -42,6 +40,10 @@ public class OrchestratorTest {
 
     @BeforeEach
     void setUp(){
+        payIn = Mockito.mock(PayIn.class);
+        payOut = Mockito.mock(PayOut.class);
+        dataTransferRepository = Mockito.mock(DataTransferRepository.class);
+
         orchestrator = new Orchestrator(
                 payIn,
                 payOut,

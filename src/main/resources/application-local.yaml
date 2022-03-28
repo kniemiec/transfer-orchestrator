@@ -18,3 +18,7 @@ payout:
   path:
     topup: "/v1/topup"
     stream: "/v1/topups/stream"
+
+compliance:
+  host: "localhost"
+  port: "9091"

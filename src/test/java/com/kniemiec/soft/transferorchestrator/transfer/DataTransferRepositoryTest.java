@@ -1,12 +1,12 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
+import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.test.StepVerifier;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @DirtiesContext
-@SpringBootTest
+@DataMongoTest
 @ActiveProfiles("test")
 public class DataTransferRepositoryTest {
 
