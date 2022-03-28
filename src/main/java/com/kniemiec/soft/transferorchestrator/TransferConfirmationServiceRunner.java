@@ -5,9 +5,11 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")
 public class TransferConfirmationServiceRunner implements ApplicationRunner {
 
     private TopUpConfirmationServiceImpl topUpConfirmationService;
@@ -19,7 +21,7 @@ public class TransferConfirmationServiceRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments arguments) throws Exception{
         Server server = ServerBuilder
-                .forPort(9090)
+                .forPort(9999)
                 .addService(topUpConfirmationService).build();
 
         server.start();

@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.transfer;
+package com.kniemiec.soft.transferorchestrator;
 
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
@@ -68,7 +68,7 @@ public class MockData {
                 "",
                 new Address("Kanadyjska", "Zielonki", "32-087", "Poland"),
                 new Address("Kołłątajowskiej", "Krakóœ", "31-234", "Poland"),
-                // TODO - why this is 'valid'
+                // TODO - why this is 'valid' - validatio should fail here
                 new Money("", BigDecimal.valueOf(0))
         );
     }
@@ -91,5 +91,23 @@ public class MockData {
                 money,
                 topUpStatus
         );
+    }
+
+    public static User mockSenderUserData() {
+        return new User("Jan", "Kowalski", "1", new Address(
+                "Ulica",
+                "Miasto",
+                "postalCode",
+                "Poland"
+        ));
+    }
+
+    public static User mockRecipientUserData() {
+        return new User("Jan", "Kowalski", "2", new Address(
+                "Ulica",
+                "Miasto",
+                "postalCode",
+                "Poland"
+        ));
     }
 }
