@@ -1,17 +1,17 @@
 version: "3.3"
 
 services:
-  transfer-orchestrator:
-    image: transfer-orchestrator
-    build: .
-    ports:
-      - "8080:8080"
-      - "9090:9090"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-    depends_on:
-      - payin
-      - payout
+#  transfer-orchestrator:
+#    image: transfer-orchestrator
+#    build: .
+#    ports:
+#      - "8080:8080"
+#      - "9090:9090"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: local
+#    depends_on:
+#      - payin
+#      - payout
 
   payin:
     image: payin

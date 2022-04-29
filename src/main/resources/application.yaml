@@ -11,5 +11,5 @@ payout:
     stream: "/1/topups/stream"
 
 compliance:
-  host: "localhost"
-  port: "9999"
+  check:
+    url: "http://localhost:8092/checkCompliance"

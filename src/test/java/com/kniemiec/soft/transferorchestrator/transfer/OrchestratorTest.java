@@ -1,6 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
 import com.kniemiec.soft.transferorchestrator.MockData;
+import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.PayOutClientException;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
@@ -33,7 +34,7 @@ public class OrchestratorTest {
     PayIn payIn;
 
     @MockBean
-    PayOut payOut;
+    ComplianceCheckService complianceCheckService;
 
     @MockBean
     DataTransferRepository dataTransferRepository;
@@ -41,12 +42,12 @@ public class OrchestratorTest {
     @BeforeEach
     void setUp(){
         payIn = Mockito.mock(PayIn.class);
-        payOut = Mockito.mock(PayOut.class);
+        complianceCheckService = Mockito.mock(ComplianceCheckService.class);
         dataTransferRepository = Mockito.mock(DataTransferRepository.class);
 
         orchestrator = new Orchestrator(
                 payIn,
-                payOut,
+                complianceCheckService,
                 new TransferProcessor(),
                 dataTransferRepository
         );
@@ -104,7 +105,7 @@ public class OrchestratorTest {
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
         UUID expectedTransferId = UUID.randomUUID();
         when(payIn.lock(isA(Money.class),isA(String.class))).thenReturn(Mono.just(new LockResponse(expectedTransferId.toString(),LockStatus.LOCKED)));
-        when(payOut.topUp(isA(Money.class), eq(expectedTransferId.toString()),eq(transferCreationData.getSenderId()), eq(transferCreationData.getRecipientId())))
+        when(complianceCheckService.check(eq(expectedTransferId.toString()), isA(User.class),isA(User.class)))
                 .thenReturn(Mono.error(new PayOutClientException("Exception in Payout Service", HttpStatus.NOT_FOUND_404)));
         when(dataTransferRepository.save(any())).thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
         Mono<UUID> transferIdMono = orchestrator.startTransfer(transferCreationData);
@@ -112,7 +113,7 @@ public class OrchestratorTest {
                 .expectError(PayOutClientException.class)
                 .verify();
         verify(payIn).lock(transferCreationData.getMoney(), transferCreationData.getSenderId());
-        verify(payOut).topUp(isA(Money.class), eq(expectedTransferId.toString()), eq(transferCreationData.getSenderId()), eq(transferCreationData.getRecipientId()));
+        verify(complianceCheckService).check(eq(expectedTransferId.toString()), isA(User.class),isA(User.class));
         verify(dataTransferRepository).save(any());
     }
 
@@ -122,16 +123,15 @@ public class OrchestratorTest {
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
         UUID expectedTransferId = UUID.randomUUID();
         when(payIn.lock(isA(Money.class),isA(String.class))).thenReturn(Mono.just(new LockResponse(expectedTransferId.toString(),LockStatus.LOCKED)));
-        when(payOut.topUp(isA(Money.class), eq(expectedTransferId.toString()),eq(transferCreationData.getSenderId()), eq(transferCreationData.getRecipientId())))
-                .thenReturn(Mono.just(new TopUpResponse(transferCreationData.getRecipientId(), transferCreationData.getMoney(),
-                        TopUpStatus.RETURNED)));
+        when(complianceCheckService.check(eq(expectedTransferId.toString()), isA(User.class),isA(User.class)))
+                .thenReturn(Mono.just(false));
         when(dataTransferRepository.save(any())).thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
         Mono<UUID> transferIdMono = orchestrator.startTransfer(transferCreationData);
         StepVerifier.create(transferIdMono)
                 .expectError(TransferInitializationFailedException.class)
                 .verify();
         verify(payIn).lock(transferCreationData.getMoney(), transferCreationData.getSenderId());
-        verify(payOut).topUp(isA(Money.class), eq(expectedTransferId.toString()), eq(transferCreationData.getSenderId()), eq(transferCreationData.getRecipientId()));
+        verify(complianceCheckService).check(eq(expectedTransferId.toString()), isA(User.class),isA(User.class));
         verify(dataTransferRepository).save(any());
     }
 

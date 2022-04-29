@@ -99,7 +99,7 @@ public class OrchestratorIntegrationTest {
                     .log()
                     .block();
         }
-        assertEquals(Status.TOP_UP_STARTED, data.getStatus());
+        assertEquals(Status.COMPLIANCHE_CHECK, data.getStatus());
 
     }
 
@@ -208,7 +208,7 @@ public class OrchestratorIntegrationTest {
                 .expectBody(TransferStatus.class)
                 .consumeWith( response -> {
                     var transferStatus = response.getResponseBody();
-                    assertEquals(transferStatus.getStatus(),Status.TOP_UP_STARTED);
+                    assertEquals(transferStatus.getStatus(),Status.COMPLIANCHE_CHECK);
                     assertEquals(transferStatus.getTransferId(), transferId);
                 });
     }

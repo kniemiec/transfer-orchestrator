@@ -6,6 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface ComplianceCheckService {
 
-    void check(String transferId, User sender, User recipient);
+    Mono<Boolean> check(String transferId, User sender, User recipient);
 
 }

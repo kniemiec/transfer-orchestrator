@@ -4,9 +4,7 @@ spring:
       on-profile: local
   data:
     mongodb:
-      username: root
-      password: example
-      uri: mongodb://user:user@localhost:27017
+      uri: mongodb://root:example@localhost:27017
 
 payin:
   lock:
@@ -20,5 +18,5 @@ payout:
     stream: "/v1/topups/stream"
 
 compliance:
-  host: "localhost"
-  port: "9091"
+  check:
+    url: "http://localhost:8092/checkCompliance"

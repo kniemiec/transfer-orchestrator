@@ -54,4 +54,22 @@ public class TransferData {
         );
     }
 
+    public User getSender(){
+        return new User(
+                "senderName",
+                "senderSurname",
+                this.senderId,
+                this.senderAddress
+        );
+    }
+
+    public User getRecipient(){
+        return new User(
+                "recipientName",
+                "recipientSurname",
+                this.recipientId,
+                this.recipientAddress
+        );
+    }
+
 }
