@@ -5,6 +5,8 @@ public enum Status {
     CREATED,
     LOCKED,
     CAPTURED,
+    COMPLIANCHE_CHECK,
+    COMPLIANCE_OK,
     TOP_UP_STARTED,
     COMPLETED
 }

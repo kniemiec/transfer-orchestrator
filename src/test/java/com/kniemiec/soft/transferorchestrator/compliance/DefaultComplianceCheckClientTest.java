@@ -1,5 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.compliance;
 
+import com.kniemiec.soft.compliance.ComplianceCheckGrpc;
+import com.kniemiec.soft.compliance.ComplianceCheckResponse;
 import com.kniemiec.soft.transferorchestrator.MockData;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -47,15 +49,15 @@ class DefaultComplianceCheckClientTest {
     @Disabled
     void check() {
         // given
-        stubFor(unaryMethod(ComplianceCheckServiceGrpc.getCheckComplianceMethod())
-                .willReturn(ComplianceResponse.newBuilder().build()));
+        stubFor(unaryMethod(ComplianceCheckGrpc.getCheckComplianceMethod())
+                .willReturn(ComplianceCheckResponse.newBuilder().build()));
 
 
         // when
         complianceCheckClient.check("transferId", MockData.mockSenderUserData(), MockData.mockRecipientUserData() );
 
         // then
-        verifyThat(calledMethod(ComplianceCheckServiceGrpc.getCheckComplianceMethod()));
+        verifyThat(calledMethod(ComplianceCheckGrpc.getCheckComplianceMethod()));
 
     }
 }

@@ -1,5 +1,6 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
+import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.payout.PayOut;
@@ -17,16 +18,16 @@ public class Orchestrator {
 
     private final PayIn payin;
 
-    private final PayOut payout;
+    private final ComplianceCheckService complianceCheckService;
 
     private final TransferProcessor transferProcessor;
 
     private final DataTransferRepository dataTransferRepository;
 
-    public Orchestrator(PayIn payin, PayOut payout, TransferProcessor transferProcessor,
+    public Orchestrator(PayIn payin, ComplianceCheckService complianceCheckService, TransferProcessor transferProcessor,
                         DataTransferRepository dataTransferRepository) {
         this.payin = payin;
-        this.payout = payout;
+        this.complianceCheckService = complianceCheckService;
         this.transferProcessor = transferProcessor;
         this.dataTransferRepository = dataTransferRepository;
 
@@ -40,9 +41,9 @@ public class Orchestrator {
 
         this.transferProcessor.exposeQueue()
                 .filter( transferData -> transferData.getStatus().equals(Status.CAPTURED))
-                .subscribe( capturedTransfer -> payout.topUp(capturedTransfer.getMoney(), capturedTransfer.getTransferId(), capturedTransfer.getSenderId(), capturedTransfer.getRecipientId())
+                .subscribe( capturedTransfer -> complianceCheckService.check(capturedTransfer.getTransferId(), capturedTransfer.getSender(), capturedTransfer.getRecipient())
                         .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while topping up transfer "+capturedTransfer.getTransferId())))
-                        .map(newTransferData -> capturedTransfer.withStatus(Status.TOP_UP_STARTED))
+                        .map(newTransferData -> capturedTransfer.withStatus(Status.COMPLIANCHE_CHECK))
                         .flatMap(dataTransferRepository::save)
                         .subscribe(transferProcessor::addToQueue));
     }

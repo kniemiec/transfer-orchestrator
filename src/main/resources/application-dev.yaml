@@ -16,5 +16,5 @@ payout:
     stream: "/v1/topups/stream"
 
 compliance:
-  host: "compliance"
-  port: "9091"
+  check:
+    url: "http://compliance:8092/checkCompliance"

@@ -1,42 +1,55 @@
-syntax = 'proto3';
-
-package com.kniemiec.soft.transferorchestrator;
+syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "com.kniemiec.soft.transferorchestrator.compliance";
-option java_outer_classname = "ComplianceCheck";
+option go_package = "compliance-service/compliance";
+//option java_package = "com.kniemiec.soft.compliance";
+//option java_outer_classname = "ComplianceCheckService";
 
-service ComplianceCheckService {
-  rpc checkCompliance(ComplianceRequest) returns (ComplianceResponse){
-  }
+package compliance;
+
+service ComplianceCheck {
+  rpc CheckCompliance(ComplianceCheckRequest) returns (ComplianceCheckResponse) {}
+
+  rpc Hello(HelloRequest) returns (HelloResponse) {}
 }
 
-message ComplianceRequest {
-  message Address {
-    string country = 1;
-    string postalCode = 2;
-    string city = 3;
-    string street = 4;
-  }
-  message UserData {
-    string userId = 1;
-    string surname = 2;
-    string lastname = 3;
-    Address address = 4;
-  }
+message HelloRequest {
+  string message = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+}
+
+
+message ComplianceCheckRequest {
   string transferId = 1;
-  string status = 2;
   UserData senderData = 3;
   UserData receiverData = 4;
 }
 
-message ComplianceResponse {
-  message ComplianceProblem {
-    string problemId = 1;
-    string problemDescription = 2;
-  }
+message ComplianceCheckResponse {
   string transferId = 1;
-  repeated ComplianceProblem senderProblems = 2;
-  repeated ComplianceProblem receiverProblems = 3;
+  repeated ComplianceProblem senderProblem = 2;
+  repeated ComplianceProblem receiverProblem = 3;
   string complianceStatus = 4;
+}
+
+message ComplianceProblem {
+  string problemId = 1;
+  string problemDescription = 2;
+}
+
+message Address {
+  string country = 1;
+  string postalCode = 2;
+  string city = 3;
+  string street = 4;
+}
+
+message UserData {
+  string userId = 1;
+  string surname = 2;
+  string lastname = 3;
+  Address address = 4;
 }
