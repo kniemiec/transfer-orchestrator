@@ -37,4 +37,43 @@ public class TransferCreationData {
                 null
         );
     }
+
+    public TransferData toLockedTransferData(UUID transferId, String lockId) {
+        return new TransferData(
+                transferId.toString(),
+                this.getSenderId(),
+                this.getRecipientId(),
+                this.getSenderAddress(),
+                this.getRecipientAddress(),
+                this.getMoney(),
+                Status.LOCKED,
+                lockId
+        );
+    }
+
+    public TransferData toComplianceOkTransferData(UUID expectedTransferId, String lockId) {
+        return new TransferData(
+                expectedTransferId.toString(),
+                this.getSenderId(),
+                this.getRecipientId(),
+                this.getSenderAddress(),
+                this.getRecipientAddress(),
+                this.getMoney(),
+                Status.COMPLIANCE_OK,
+                lockId
+        );
+    }
+
+    public TransferData toCapturedTransferData(UUID expectedTransferId, String lockId) {
+        return new TransferData(
+                expectedTransferId.toString(),
+                this.getSenderId(),
+                this.getRecipientId(),
+                this.getSenderAddress(),
+                this.getRecipientAddress(),
+                this.getMoney(),
+                Status.CAPTURED,
+                lockId
+        );
+    }
 }

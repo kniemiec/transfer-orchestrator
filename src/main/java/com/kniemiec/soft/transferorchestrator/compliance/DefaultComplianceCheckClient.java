@@ -37,7 +37,7 @@ public class DefaultComplianceCheckClient implements ComplianceCheckService {
                 .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
                     log.warn("Status code is: {}", clientResponse.statusCode().value());
                     return clientResponse.bodyToMono(String.class)
-                            .flatMap( responseMessage -> Mono.just(null));
+                            .flatMap( responseMessage -> Mono.empty());
                 })
                 .bodyToMono(ComplianceResponse.class)
                 .flatMap( complianceResponse -> Mono.just(complianceResponse.getStatus().equals(ComplianceStatus.OK)));

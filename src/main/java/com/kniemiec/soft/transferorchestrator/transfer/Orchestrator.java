@@ -3,7 +3,6 @@ package com.kniemiec.soft.transferorchestrator.transfer;
 import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
-import com.kniemiec.soft.transferorchestrator.payout.PayOut;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,18 +31,20 @@ public class Orchestrator {
         this.dataTransferRepository = dataTransferRepository;
 
         this.transferProcessor.exposeQueue()
-                .filter( transferData -> transferData.getStatus().equals(Status.LOCKED))
-                .subscribe( lockedTransfer -> payin.capture(lockedTransfer.getLockId())
-                        .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while capturing transfer "+lockedTransfer.getTransferId())))
-                        .map(newTransferData -> lockedTransfer.withStatus(Status.CAPTURED))
+                .filter( transferData -> transferData.getStatus().equals(Status.COMPLIANCE_OK))
+                .subscribe( complianceVerifiedTransfer -> payin.capture(complianceVerifiedTransfer.getLockId())
+                        .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while capturing transfer "+complianceVerifiedTransfer.getTransferId())))
+                        .map(newTransferData -> complianceVerifiedTransfer.withStatus(Status.CAPTURED))
                         .flatMap(dataTransferRepository::save)
                         .subscribe(transferProcessor::addToQueue));
 
         this.transferProcessor.exposeQueue()
-                .filter( transferData -> transferData.getStatus().equals(Status.CAPTURED))
-                .subscribe( capturedTransfer -> complianceCheckService.check(capturedTransfer.getTransferId(), capturedTransfer.getSender(), capturedTransfer.getRecipient())
-                        .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while topping up transfer "+capturedTransfer.getTransferId())))
-                        .map(newTransferData -> capturedTransfer.withStatus(Status.COMPLIANCHE_CHECK))
+                .filter( transferData -> transferData.getStatus().equals(Status.LOCKED))
+                .subscribe( lockedTransfer -> complianceCheckService.check(lockedTransfer.getTransferId(), lockedTransfer.getSender(), lockedTransfer.getRecipient())
+//                        TODO - send this to DQL - DLQ needs to be created
+//                        .switchIfEmpty( status->  dataTransferRepository.save(lockedTransfer.withStatus(Status.COMPLIANCE_ALERT))
+                        .filter(complianceStatus -> complianceStatus)
+                        .map(newTransferData -> lockedTransfer.withStatus(Status.COMPLIANCE_OK))
                         .flatMap(dataTransferRepository::save)
                         .subscribe(transferProcessor::addToQueue));
     }
