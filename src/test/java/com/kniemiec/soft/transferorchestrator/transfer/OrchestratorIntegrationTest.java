@@ -4,7 +4,6 @@ import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
-import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
                 "payin.url=http://localhost:8090/lock",
                 "payout.baseUrl=http://localhost:8090",
                 "payout.path.topup=/v1/topup",
-                "payout.path.stream=/v1/topups/stream"
+                "payout.path.stream=/v1/topups/stream",
+                "compliance.check.url=http://localhost:8090/checkCompliance"
         }
 )
 public class OrchestratorIntegrationTest {
@@ -61,11 +61,16 @@ public class OrchestratorIntegrationTest {
                 MockData.mockCaptureResponse(lockId,
                         CaptureStatus.CAPTURED)
         ).withFixedDelay(1000)));
-        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
-                MockData.mockTopUpResponseData(lockId,
-                        transferCreationData.getMoney(),
-                        TopUpStatus.COMPLETED)
-        ).withFixedDelay(2000)));
+        stubFor(put("/checkCompliance").willReturn(ResponseDefinitionBuilder.okForJson(
+                MockData.mockComplianceResponseOK()
+        ).withFixedDelay(1000)));
+
+        // TODO uncomment when implementation is completed
+//        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
+//                MockData.mockTopUpResponseData(lockId,
+//                        transferCreationData.getMoney(),
+//                        TopUpStatus.COMPLETED)
+//        ).withFixedDelay(2000)));
 
 
         List<UUID> collectTransferData = new ArrayList<>();
@@ -92,14 +97,14 @@ public class OrchestratorIntegrationTest {
                 .block();
 
         int counter = 0;
-        while(!data.getStatus().equals(Status.TOP_UP_STARTED) && counter < 5){
+        while(!data.getStatus().equals(Status.COMPLIANCE_OK) && counter < 5){
             counter++;
             Thread.sleep(1000);
             data =  dataTransferRepository.findById(collectTransferData.get(0).toString())
                     .log()
                     .block();
         }
-        assertEquals(Status.COMPLIANCHE_CHECK, data.getStatus());
+        assertEquals(Status.COMPLIANCE_OK, data.getStatus());
 
     }
 
@@ -160,8 +165,9 @@ public class OrchestratorIntegrationTest {
                 .isBadRequest();
     }
 
+
     @Test
-    public void callCreateTransferAndReceiveTransferStatus() throws Exception{
+    public void callCreateTransferWhenComplianceAlert() throws Exception{
         // given
         String lockId = UUID.randomUUID().toString();
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
@@ -174,11 +180,14 @@ public class OrchestratorIntegrationTest {
                 MockData.mockCaptureResponse(lockId,
                         CaptureStatus.CAPTURED)
         ).withFixedDelay(1000)));
-        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
-                MockData.mockTopUpResponseData(lockId,
-                        transferCreationData.getMoney(),
-                        TopUpStatus.COMPLETED)
-        ).withFixedDelay(2000)));
+        stubFor(put("/checkCompliance").willReturn(ResponseDefinitionBuilder.okForJson(
+                MockData.mockComplianceResponseAlert()
+        ).withFixedDelay(1000)));
+//        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
+//                MockData.mockTopUpResponseData(lockId,
+//                        transferCreationData.getMoney(),
+//                        TopUpStatus.COMPLETED)
+//        ).withFixedDelay(2000)));
 
         List<UUID> receivedTransferId = new ArrayList<>();
 
@@ -208,7 +217,65 @@ public class OrchestratorIntegrationTest {
                 .expectBody(TransferStatus.class)
                 .consumeWith( response -> {
                     var transferStatus = response.getResponseBody();
-                    assertEquals(transferStatus.getStatus(),Status.COMPLIANCHE_CHECK);
+                    // TODO - implement change of status when something fails
+                    assertEquals(Status.LOCKED, transferStatus.getStatus());
+                    assertEquals(transferStatus.getTransferId(), transferId);
+                });
+    }
+
+
+    @Test
+    public void callCreateTransferAndReceiveTransferStatus() throws Exception{
+        // given
+        String lockId = UUID.randomUUID().toString();
+        TransferCreationData transferCreationData = MockData.mockTransferCreationData();
+
+        stubFor(post("/lock").willReturn(ResponseDefinitionBuilder.okForJson(
+                MockData.mockLockResponseData(lockId, LockStatus.LOCKED)
+        )));
+
+        stubFor(post("/capture").willReturn(ResponseDefinitionBuilder.okForJson(
+                MockData.mockCaptureResponse(lockId,
+                        CaptureStatus.CAPTURED)
+        ).withFixedDelay(1000)));
+        stubFor(put("/checkCompliance").willReturn(ResponseDefinitionBuilder.okForJson(
+                MockData.mockComplianceResponseOK()
+        ).withFixedDelay(1000)));
+//        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
+//                MockData.mockTopUpResponseData(lockId,
+//                        transferCreationData.getMoney(),
+//                        TopUpStatus.COMPLETED)
+//        ).withFixedDelay(2000)));
+
+        List<UUID> receivedTransferId = new ArrayList<>();
+
+        // when
+        webTestClient.post()
+                .uri("/v2/start-transfer")
+                .bodyValue(transferCreationData)
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(UUID.class)
+                .consumeWith( transferIdResult -> {
+                    var transferId = transferIdResult.getResponseBody();
+                    assertNotNull(transferId);
+                    receivedTransferId.add(transferId);
+                });
+
+        var transferId = receivedTransferId.get(0);
+
+        Thread.sleep(5000);
+        // then
+        webTestClient.get()
+                .uri("/transfer-status/"+transferId.toString())
+                .exchange()
+                .expectStatus()
+                .is2xxSuccessful()
+                .expectBody(TransferStatus.class)
+                .consumeWith( response -> {
+                    var transferStatus = response.getResponseBody();
+                    assertEquals(Status.CAPTURED, transferStatus.getStatus());
                     assertEquals(transferStatus.getTransferId(), transferId);
                 });
     }

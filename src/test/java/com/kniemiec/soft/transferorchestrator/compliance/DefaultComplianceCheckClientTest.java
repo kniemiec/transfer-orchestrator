@@ -2,37 +2,40 @@ package com.kniemiec.soft.transferorchestrator.compliance;
 
 import com.kniemiec.soft.transferorchestrator.MockData;
 
-import com.kniemiec.soft.transferorchestrator.transfer.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 import static org.mockito.Mockito.verify;
 
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@ActiveProfiles("test")
+//@AutoConfigureWebTestClient
+//@AutoConfigureWireMock(port = 8092)
 class DefaultComplianceCheckClientTest {
 
 
+    @Autowired
     private DefaultComplianceCheckClient complianceCheckClient;
 
-    @Mock
-    WebClient webClient;
+    @Autowired
+    WebTestClient webTestClient;
 
     @BeforeEach
     void setUp(){
-        webClient = Mockito.mock(WebClient.class);
-        complianceCheckClient = new DefaultComplianceCheckClient(webClient);
     }
 
 
     @Test
+    @Disabled
     void check() {
         // given
 
@@ -40,7 +43,7 @@ class DefaultComplianceCheckClientTest {
         complianceCheckClient.check("transferId", MockData.mockSenderUserData(), MockData.mockRecipientUserData() );
 
         // then
-        verify(webClient.put());
+        verify(webTestClient.put());
 
     }
 }

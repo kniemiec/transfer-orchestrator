@@ -1,5 +1,8 @@
 package com.kniemiec.soft.transferorchestrator;
 
+import com.kniemiec.soft.transferorchestrator.compliance.model.ComplianceProblem;
+import com.kniemiec.soft.transferorchestrator.compliance.model.ComplianceResponse;
+import com.kniemiec.soft.transferorchestrator.compliance.model.ComplianceStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
@@ -9,6 +12,7 @@ import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.UUID;
 
 public class MockData {
@@ -109,5 +113,21 @@ public class MockData {
                 "postalCode",
                 "Poland"
         ));
+    }
+
+    public static ComplianceResponse mockComplianceResponseOK() {
+        return new ComplianceResponse(
+                Collections.emptyList(),
+                Collections.emptyList(),
+                ComplianceStatus.OK
+        );
+    }
+
+    public static ComplianceResponse mockComplianceResponseAlert() {
+        return new ComplianceResponse(
+                Collections.singletonList(new ComplianceProblem("firstSenderProblem","User on sanction list")),
+                Collections.singletonList(new ComplianceProblem("firstReceiverProblem", "User on sanction list")),
+                ComplianceStatus.ALERT
+        );
     }
 }

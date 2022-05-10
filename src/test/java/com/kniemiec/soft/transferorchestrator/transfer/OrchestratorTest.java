@@ -4,17 +4,15 @@ import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.PayOutClientException;
+import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
+import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
-import com.kniemiec.soft.transferorchestrator.payout.PayOut;
-import com.kniemiec.soft.transferorchestrator.payout.model.TopUpResponse;
-import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import wiremock.org.eclipse.jetty.http.HttpStatus;
@@ -30,13 +28,10 @@ public class OrchestratorTest {
 
     Orchestrator orchestrator;
 
-    @MockBean
     PayIn payIn;
 
-    @MockBean
     ComplianceCheckService complianceCheckService;
 
-    @MockBean
     DataTransferRepository dataTransferRepository;
 
     @BeforeEach
@@ -57,12 +52,24 @@ public class OrchestratorTest {
     public void callCreateTransfer(){
         // given
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
+
+
         UUID expectedTransferId = UUID.randomUUID();
         UUID lockId = UUID.randomUUID();
+
         when(payIn.lock(isA(Money.class),isA(String.class)))
                 .thenReturn(Mono.just(new LockResponse(lockId.toString(),LockStatus.LOCKED)));
+        when(complianceCheckService.check(eq(expectedTransferId.toString()),isA(User.class), isA(User.class)))
+                .thenReturn(Mono.just(true));
+        when(payIn.capture(eq(lockId.toString())))
+                .thenReturn(Mono.just(new CaptureResponse(lockId.toString(), CaptureStatus.CAPTURED)));
         when(dataTransferRepository.save(any()))
-                .thenReturn(Mono.just(transferCreationData.toNewTransferData(expectedTransferId)));
+                .thenReturn(
+                        Mono.just(transferCreationData.toNewTransferData(expectedTransferId)),
+                        Mono.just(transferCreationData.toLockedTransferData(expectedTransferId, lockId.toString())),
+                        Mono.just(transferCreationData.toComplianceOkTransferData(expectedTransferId, lockId.toString())),
+                        Mono.just(transferCreationData.toCapturedTransferData(expectedTransferId,lockId.toString()))
+                );
 
         // when
         Mono<UUID> transferIdMono = orchestrator.startTransfer(transferCreationData);
@@ -72,7 +79,9 @@ public class OrchestratorTest {
                 .expectNext(expectedTransferId)
                 .verifyComplete();
         verify(payIn).lock(transferCreationData.getMoney(), transferCreationData.getSenderId());
-        verify(dataTransferRepository, times(2)).save(any());
+        verify(complianceCheckService).check(eq(expectedTransferId.toString()), isA(User.class), isA(User.class));
+        verify(payIn).capture(eq(lockId.toString()));
+        verify(dataTransferRepository, times(4)).save(any());
     }
 
     @Test
@@ -98,6 +107,68 @@ public class OrchestratorTest {
         verify(payIn,times(0) ).capture(isA(String.class));
         verify(dataTransferRepository, times(1)).save(any());
     }
+
+    @Test
+    public void callCreateTransferWhenComplianceAlert(){
+        // given
+        TransferCreationData transferCreationData = MockData.mockTransferCreationData();
+        UUID expectedTransferId = UUID.randomUUID();
+        UUID lockId = UUID.randomUUID();
+        when(payIn.lock(isA(Money.class),isA(String.class)))
+                .thenReturn(Mono.just(new LockResponse(lockId.toString(),LockStatus.LOCKED)));
+        when(dataTransferRepository.save(any()))
+                .thenReturn(
+                        Mono.just(transferCreationData.toNewTransferData(expectedTransferId)),
+                        Mono.just(transferCreationData.toLockedTransferData(expectedTransferId, lockId.toString()))
+                );
+        when(complianceCheckService.check(eq(expectedTransferId.toString()),isA(User.class), isA(User.class)))
+                .thenReturn(Mono.just(false));
+
+
+        // when
+        Mono<UUID> transferIdMono = orchestrator.startTransfer(transferCreationData);
+
+        // then
+        StepVerifier.create(transferIdMono)
+                .expectNext(expectedTransferId)
+                .verifyComplete();
+
+        verify(payIn).lock(eq(transferCreationData.getMoney()), eq(transferCreationData.getSenderId()));
+        verify(complianceCheckService).check(eq(expectedTransferId.toString()), isA(User.class), isA(User.class));
+        verify(payIn,times(0) ).capture(isA(String.class));
+        verify(dataTransferRepository, times(2)).save(any());
+    }
+
+    @Test
+    public void callCreateTransferWhenComplianceFails(){
+        // given
+        TransferCreationData transferCreationData = MockData.mockTransferCreationData();
+        UUID expectedTransferId = UUID.randomUUID();
+        UUID lockId = UUID.randomUUID();
+        when(payIn.lock(isA(Money.class),isA(String.class)))
+                .thenReturn(Mono.just(new LockResponse(lockId.toString(),LockStatus.LOCKED)));
+        when(dataTransferRepository.save(any()))
+                .thenReturn(
+                        Mono.just(transferCreationData.toNewTransferData(expectedTransferId)),
+                        Mono.just(transferCreationData.toLockedTransferData(expectedTransferId, lockId.toString()))
+                );
+        when(complianceCheckService.check(eq(expectedTransferId.toString()),isA(User.class), isA(User.class)))
+                .thenReturn(Mono.empty());
+
+
+        // when
+        Mono<UUID> transferIdMono = orchestrator.startTransfer(transferCreationData);
+
+        // then
+        StepVerifier.create(transferIdMono)
+                .expectNext(expectedTransferId)
+                .verifyComplete();
+
+        verify(payIn).lock(eq(transferCreationData.getMoney()), eq(transferCreationData.getSenderId()));
+        verify(payIn,times(0) ).capture(isA(String.class));
+        verify(dataTransferRepository, times(2)).save(any());
+    }
+
 
     @Test
     @Disabled
