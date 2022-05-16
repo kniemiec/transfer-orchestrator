@@ -17,4 +17,4 @@ payout:
 
 compliance:
   check:
-    url: "http://compliance:8092/checkCompliance"
+    url: "http://host.docker.internal:31144/checkCompliance"
