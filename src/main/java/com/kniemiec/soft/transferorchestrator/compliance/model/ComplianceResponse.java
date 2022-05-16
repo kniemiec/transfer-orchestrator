@@ -11,6 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ComplianceResponse {
 
+    String transferId;
+
     List<ComplianceProblem> senderStatus;
 
     List<ComplianceProblem> recipientStatus;

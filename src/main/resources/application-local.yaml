@@ -19,4 +19,4 @@ payout:
 
 compliance:
   check:
-    url: "http://localhost:8092/checkCompliance"
+    url: "http://localhost:31144/checkCompliance"
