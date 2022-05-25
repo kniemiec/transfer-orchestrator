@@ -115,16 +115,18 @@ public class MockData {
         ));
     }
 
-    public static ComplianceResponse mockComplianceResponseOK() {
+    public static ComplianceResponse mockComplianceResponseOK(String transferId) {
         return new ComplianceResponse(
+                transferId,
                 Collections.emptyList(),
                 Collections.emptyList(),
                 ComplianceStatus.OK
         );
     }
 
-    public static ComplianceResponse mockComplianceResponseAlert() {
+    public static ComplianceResponse mockComplianceResponseAlert(String transferId) {
         return new ComplianceResponse(
+                transferId,
                 Collections.singletonList(new ComplianceProblem("firstSenderProblem","User on sanction list")),
                 Collections.singletonList(new ComplianceProblem("firstReceiverProblem", "User on sanction list")),
                 ComplianceStatus.ALERT

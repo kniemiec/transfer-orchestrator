@@ -9,6 +9,7 @@ import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
+import com.kniemiec.soft.transferorchestrator.transfer.services.StartTransferAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,17 +35,21 @@ public class OrchestratorTest {
 
     DataTransferRepository dataTransferRepository;
 
+    StartTransferAction startTransferAction;
+
     @BeforeEach
     void setUp(){
         payIn = Mockito.mock(PayIn.class);
         complianceCheckService = Mockito.mock(ComplianceCheckService.class);
         dataTransferRepository = Mockito.mock(DataTransferRepository.class);
+        startTransferAction = Mockito.mock(StartTransferAction.class);
 
         orchestrator = new Orchestrator(
                 payIn,
                 complianceCheckService,
                 new TransferProcessor(),
-                dataTransferRepository
+                dataTransferRepository,
+                startTransferAction
         );
     }
 

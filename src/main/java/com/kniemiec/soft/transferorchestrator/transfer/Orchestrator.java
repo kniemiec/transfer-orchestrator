@@ -4,6 +4,7 @@ import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
+import com.kniemiec.soft.transferorchestrator.transfer.services.StartTransferAction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -23,12 +24,16 @@ public class Orchestrator {
 
     private final DataTransferRepository dataTransferRepository;
 
+    private final StartTransferAction startTransferAction;
+
     public Orchestrator(PayIn payin, ComplianceCheckService complianceCheckService, TransferProcessor transferProcessor,
-                        DataTransferRepository dataTransferRepository) {
+                        DataTransferRepository dataTransferRepository,
+                        StartTransferAction startTransferAction) {
         this.payin = payin;
         this.complianceCheckService = complianceCheckService;
         this.transferProcessor = transferProcessor;
         this.dataTransferRepository = dataTransferRepository;
+        this.startTransferAction = startTransferAction;
 
         this.transferProcessor.exposeQueue()
                 .filter( transferData -> transferData.getStatus().equals(Status.COMPLIANCE_OK))
@@ -51,18 +56,7 @@ public class Orchestrator {
 
     public Mono<UUID> startTransfer(TransferCreationData transferCreationData){
         UUID transferId = UUID.randomUUID();
-        return dataTransferRepository
-                .save(transferCreationData.toNewTransferData(transferId))
-                .flatMap(transferData -> payin.lock(transferData.getMoney(), transferData.getSenderId())
-                        .filter(lockResponse -> lockResponse.getStatus().equals(LockStatus.LOCKED))
-                        .map(lockResponse -> transferData.withStatus(Status.LOCKED).withLockId(lockResponse.getLockId())))
-                        .flatMap(dataTransferRepository::save)
-                        .map(transferProcessor::addToQueue)
-                        .flatMap( saved ->
-                            Mono.just(UUID.fromString(saved.getTransferId()))
-                        )
-                        .switchIfEmpty(Mono.error(new TransferInitializationFailedException("Unable to initialize transfer for sender: " + transferCreationData.getSenderId()))
-                );
+        return startTransferAction.tryStartTransfer(transferCreationData, transferId);
     }
 
     public Mono<TransferStatus> getTransferStatus(UUID transferId) {
