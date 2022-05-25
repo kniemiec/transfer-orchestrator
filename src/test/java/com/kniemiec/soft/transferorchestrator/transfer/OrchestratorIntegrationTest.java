@@ -51,6 +51,7 @@ public class OrchestratorIntegrationTest {
     public void callCreateTransferFullFlow() throws InterruptedException {
         // given
         String lockId = UUID.randomUUID().toString();
+        String transferId = UUID.randomUUID().toString();
 
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
 
@@ -62,7 +63,7 @@ public class OrchestratorIntegrationTest {
                         CaptureStatus.CAPTURED)
         ).withFixedDelay(1000)));
         stubFor(put("/checkCompliance").willReturn(ResponseDefinitionBuilder.okForJson(
-                MockData.mockComplianceResponseOK()
+                MockData.mockComplianceResponseOK(transferId)
         ).withFixedDelay(1000)));
 
         // TODO uncomment when implementation is completed
@@ -84,9 +85,9 @@ public class OrchestratorIntegrationTest {
                 .isCreated()
                 .expectBody(UUID.class)
                 .consumeWith(transferIdResult -> {
-                    var transferId = transferIdResult.getResponseBody();
-                    assertNotNull(transferId);
-                    collectTransferData.add(transferId);
+                    var randomTransferId = transferIdResult.getResponseBody();
+                    assertNotNull(randomTransferId);
+                    collectTransferData.add(randomTransferId);
                 });
 
 
@@ -100,7 +101,7 @@ public class OrchestratorIntegrationTest {
         while(!data.getStatus().equals(Status.COMPLIANCE_OK) && counter < 5){
             counter++;
             Thread.sleep(1000);
-            data =  dataTransferRepository.findById(collectTransferData.get(0).toString())
+            data =  dataTransferRepository.findById(transferId)
                     .log()
                     .block();
         }
@@ -170,6 +171,7 @@ public class OrchestratorIntegrationTest {
     public void callCreateTransferWhenComplianceAlert() throws Exception{
         // given
         String lockId = UUID.randomUUID().toString();
+        String transferId = UUID.randomUUID().toString();
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
 
         stubFor(post("/lock").willReturn(ResponseDefinitionBuilder.okForJson(
@@ -181,7 +183,7 @@ public class OrchestratorIntegrationTest {
                         CaptureStatus.CAPTURED)
         ).withFixedDelay(1000)));
         stubFor(put("/checkCompliance").willReturn(ResponseDefinitionBuilder.okForJson(
-                MockData.mockComplianceResponseAlert()
+                MockData.mockComplianceResponseAlert(transferId)
         ).withFixedDelay(1000)));
 //        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
 //                MockData.mockTopUpResponseData(lockId,
@@ -200,12 +202,11 @@ public class OrchestratorIntegrationTest {
                 .isCreated()
                 .expectBody(UUID.class)
                 .consumeWith( transferIdResult -> {
-                    var transferId = transferIdResult.getResponseBody();
-                    assertNotNull(transferId);
-                    receivedTransferId.add(transferId);
+                    var randomTransferId = transferIdResult.getResponseBody();
+                    assertNotNull(randomTransferId);
+                    receivedTransferId.add(randomTransferId);
                 });
 
-        var transferId = receivedTransferId.get(0);
 
         Thread.sleep(5000);
         // then
@@ -228,6 +229,7 @@ public class OrchestratorIntegrationTest {
     public void callCreateTransferAndReceiveTransferStatus() throws Exception{
         // given
         String lockId = UUID.randomUUID().toString();
+        String notDoneTransferId = UUID.randomUUID().toString();
         TransferCreationData transferCreationData = MockData.mockTransferCreationData();
 
         stubFor(post("/lock").willReturn(ResponseDefinitionBuilder.okForJson(
@@ -239,7 +241,7 @@ public class OrchestratorIntegrationTest {
                         CaptureStatus.CAPTURED)
         ).withFixedDelay(1000)));
         stubFor(put("/checkCompliance").willReturn(ResponseDefinitionBuilder.okForJson(
-                MockData.mockComplianceResponseOK()
+                MockData.mockComplianceResponseOK(notDoneTransferId)
         ).withFixedDelay(1000)));
 //        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
 //                MockData.mockTopUpResponseData(lockId,
@@ -258,9 +260,9 @@ public class OrchestratorIntegrationTest {
                 .isCreated()
                 .expectBody(UUID.class)
                 .consumeWith( transferIdResult -> {
-                    var transferId = transferIdResult.getResponseBody();
-                    assertNotNull(transferId);
-                    receivedTransferId.add(transferId);
+                    var randomTransferId = transferIdResult.getResponseBody();
+                    assertNotNull(randomTransferId);
+                    receivedTransferId.add(randomTransferId);
                 });
 
         var transferId = receivedTransferId.get(0);
