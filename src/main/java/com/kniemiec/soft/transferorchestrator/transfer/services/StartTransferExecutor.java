@@ -7,14 +7,13 @@ import com.kniemiec.soft.transferorchestrator.transfer.TransferInitializationFai
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 @Component
-public class StartTransferAction {
+public class StartTransferExecutor {
 
     private final DataTransferRepository dataTransferRepository;
 
@@ -22,16 +21,17 @@ public class StartTransferAction {
 
     private final TransferProcessor transferProcessor;
 
-    public StartTransferAction(DataTransferRepository dataTransferRepository,
-                                    PayIn payIn,
-                                    TransferProcessor transferProcessor){
+    public StartTransferExecutor(DataTransferRepository dataTransferRepository,
+                                 PayIn payIn,
+                                 TransferProcessor transferProcessor){
         this.dataTransferRepository = dataTransferRepository;
         this.payin = payIn;
         this.transferProcessor = transferProcessor;
 
     }
 
-    public Mono<UUID> tryStartTransfer(TransferCreationData transferCreationData, UUID transferId) {
+    public Mono<UUID> tryStartTransfer(TransferCreationData transferCreationData) {
+        UUID transferId = UUID.randomUUID();
         return dataTransferRepository
                 .save(transferCreationData.toNewTransferData(transferId))
                 .flatMap(transferData -> payin.lock(transferData.getMoney(), transferData.getSenderId())

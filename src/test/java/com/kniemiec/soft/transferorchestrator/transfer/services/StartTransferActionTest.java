@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 class StartTransferActionTest {
 
-    private StartTransferAction underTest;
+    private StartTransferExecutor underTest;
 
     private DataTransferRepository dataTransferRepositoryMock;
 
@@ -36,7 +36,7 @@ class StartTransferActionTest {
         dataTransferRepositoryMock = Mockito.mock(DataTransferRepository.class);
         payInMock = Mockito.mock(DefaultPayIn.class);
         transferProcessor = new TransferProcessor();
-        underTest = new StartTransferAction(
+        underTest = new StartTransferExecutor(
             dataTransferRepositoryMock,
                 payInMock,
                 transferProcessor
@@ -57,7 +57,7 @@ class StartTransferActionTest {
         when(payInMock.lock(any(Money.class), any())).thenReturn(Mono.just(lockResponse));
 
         // when
-        var result = underTest.tryStartTransfer(transferCreationData, transferId);
+        var result = underTest.tryStartTransfer(transferCreationData);
 
         // then
         StepVerifier.create(result)
