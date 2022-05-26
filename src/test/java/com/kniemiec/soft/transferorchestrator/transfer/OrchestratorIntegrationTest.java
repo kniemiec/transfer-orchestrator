@@ -78,7 +78,7 @@ public class OrchestratorIntegrationTest {
 
         // when
         webTestClient.post()
-                .uri("/v2/start-transfer")
+                .uri("/v1/start-transfer")
                 .bodyValue(transferCreationData)
                 .exchange()
                 .expectStatus()
@@ -124,7 +124,7 @@ public class OrchestratorIntegrationTest {
 
         // when
         webTestClient.post()
-                .uri("/v2/start-transfer")
+                .uri("/v1/start-transfer")
                 .bodyValue(transferCreationData)
                 .exchange()
                 .expectStatus()
@@ -140,7 +140,7 @@ public class OrchestratorIntegrationTest {
 
         // when
         webTestClient.post()
-                .uri("/v2/start-transfer")
+                .uri("/v1/start-transfer")
                 .bodyValue(transferCreationData)
                 .exchange()
                 .expectStatus()
@@ -159,7 +159,7 @@ public class OrchestratorIntegrationTest {
 
         // when
         webTestClient.post()
-                .uri("/v2/start-transfer")
+                .uri("/v1/start-transfer")
                 .bodyValue(transferCreationData)
                 .exchange()
                 .expectStatus()
@@ -195,7 +195,7 @@ public class OrchestratorIntegrationTest {
 
         // when
         webTestClient.post()
-                .uri("/v2/start-transfer")
+                .uri("/v1/start-transfer")
                 .bodyValue(transferCreationData)
                 .exchange()
                 .expectStatus()
@@ -211,7 +211,7 @@ public class OrchestratorIntegrationTest {
         Thread.sleep(5000);
         // then
         webTestClient.get()
-                .uri("/transfer-status/"+transferId.toString())
+                .uri("/v1/transfer-status/"+transferId.toString())
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()
@@ -253,7 +253,7 @@ public class OrchestratorIntegrationTest {
 
         // when
         webTestClient.post()
-                .uri("/v2/start-transfer")
+                .uri("/v1/start-transfer")
                 .bodyValue(transferCreationData)
                 .exchange()
                 .expectStatus()
@@ -270,7 +270,7 @@ public class OrchestratorIntegrationTest {
         Thread.sleep(5000);
         // then
         webTestClient.get()
-                .uri("/transfer-status/"+transferId.toString())
+                .uri("/v1/transfer-status/"+transferId.toString())
                 .exchange()
                 .expectStatus()
                 .is2xxSuccessful()

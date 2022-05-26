@@ -2,6 +2,7 @@ package com.kniemiec.soft.transferorchestrator.transfer;
 
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
+import com.kniemiec.soft.transferorchestrator.transfer.services.StartTransferExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,28 +18,25 @@ import java.util.UUID;
 @Slf4j
 public class TransferController {
 
-    private final Orchestrator transferOrchestrator;
+    private final StartTransferExecutor startTransferExecutor;
 
-    public TransferController(Orchestrator orchestrator){
-        this.transferOrchestrator = orchestrator;
+    private final  TransferProcessor transferProcessor;
+
+    public TransferController(StartTransferExecutor startTransferExecutor,
+                              TransferProcessor transferProcessor){
+        this.startTransferExecutor = startTransferExecutor;
+        this.transferProcessor = transferProcessor;
     }
 
-    @PostMapping(value = "/v2/start-transfer")
+    @PostMapping(value = "/v1/start-transfer")
     @ResponseStatus(HttpStatus.CREATED)
     Mono<UUID> startTransfer(@RequestBody @Valid TransferCreationData transferCreationData){
         log.info("Alternative start transfer: {}", transferCreationData);
-        return transferOrchestrator.startTransfer(transferCreationData);
+        return startTransferExecutor.tryStartTransfer(transferCreationData);
     }
 
-    @GetMapping(value = "/transfer-status/{transferId}")
-    Mono<TransferStatus> getTransferData(@PathVariable String transferId){
-        return transferOrchestrator.getTransferStatus(UUID.fromString(transferId));
-    }
-
-
-    @GetMapping(value = "/v2/transfers/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(value = "/v1/transfers/stream", produces = MediaType.APPLICATION_NDJSON_VALUE)
     Flux<TransferStatus> getTransferData(){
-        return transferOrchestrator.getStreamOfData()
-                .map(TransferStatus::from);
+        return transferProcessor.exposeQueue().map(TransferStatus::from);
     }
 }
