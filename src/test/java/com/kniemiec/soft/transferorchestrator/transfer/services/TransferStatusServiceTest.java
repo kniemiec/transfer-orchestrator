@@ -12,7 +12,6 @@ import reactor.test.StepVerifier;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class TransferStatusServiceTest {
@@ -40,9 +39,7 @@ class TransferStatusServiceTest {
         var retrievedTransferData = underTest.getTransferStatus(transferId);
 
         // then
-        StepVerifier.create(retrievedTransferData).assertNext(transferStatus -> {
-            transferStatus.getStatus().equals(transferData.getStatus());
-        })
+        StepVerifier.create(retrievedTransferData).assertNext(transferStatus -> transferStatus.getStatus().equals(transferData.getStatus()))
                 .verifyComplete();
 
     }
