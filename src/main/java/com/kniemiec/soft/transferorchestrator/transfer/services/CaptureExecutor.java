@@ -1,6 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
 import com.kniemiec.soft.transferorchestrator.payin.PayIn;
+import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferInitializationFailedException;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
@@ -31,6 +32,7 @@ public class CaptureExecutor {
         this.transferProcessor.exposeQueue()
                 .filter( transferData -> transferData.getStatus().equals(Status.COMPLIANCE_OK))
                 .subscribe( complianceVerifiedTransfer -> payin.capture(complianceVerifiedTransfer.getLockId())
+                        .filter( captureResponse -> captureResponse.getStatus().equals(CaptureStatus.CAPTURED))
                         .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while capturing transfer "+complianceVerifiedTransfer.getTransferId())))
                         .map(newTransferData -> complianceVerifiedTransfer.withStatus(Status.CAPTURED))
                         .flatMap(dataTransferRepository::save)
