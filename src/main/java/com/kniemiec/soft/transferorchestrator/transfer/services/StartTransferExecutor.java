@@ -27,7 +27,6 @@ public class StartTransferExecutor {
         this.dataTransferRepository = dataTransferRepository;
         this.payin = payIn;
         this.transferProcessor = transferProcessor;
-
     }
 
     public Mono<UUID> tryStartTransfer(TransferCreationData transferCreationData) {
