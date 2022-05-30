@@ -10,5 +10,5 @@ public interface PayIn {
     Mono<LockResponse> lock(Money money, String senderId);
 
 
-    Mono<CaptureResponse> capture(String captureId);
+    Mono<CaptureResponse> capture(String lockId);
 }

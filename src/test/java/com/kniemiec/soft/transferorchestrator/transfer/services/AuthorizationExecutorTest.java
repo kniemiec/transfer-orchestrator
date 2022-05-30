@@ -57,11 +57,10 @@ class AuthorizationExecutorTest {
     }
 
     @Test
-    void shouldNotSaveComplianceWhenComplianceTrue() {
+    void shouldNotSaveComplianceWhenComplianceFalse() {
         // given
         UUID transferId = UUID.randomUUID();
         TransferData initialTransferData = MockData.mockTransferData(transferId).withStatus(Status.LOCKED);
-        TransferData savedTransferData = MockData.mockTransferData(transferId).withStatus(Status.COMPLIANCE_OK);
 
         when(complianceCheckService.check(any(),isA(User.class),isA(User.class))).thenReturn(Mono.just(false));
 
@@ -72,19 +71,5 @@ class AuthorizationExecutorTest {
         verify(dataTransferRepository, times(0)).save(argThat(new TransferDataMatcher(Status.COMPLIANCE_OK)));
         verify(complianceCheckService).check(any(),isA(User.class), isA(User.class));
 
-    }
-
-    class TransferDataMatcher implements ArgumentMatcher<TransferData> {
-
-        private Status status;
-
-        public TransferDataMatcher(Status status){
-            this.status = status;
-        }
-
-        @Override
-        public boolean matches(TransferData argument) {
-            return argument.getStatus().equals(this.status);
-        }
     }
 }
