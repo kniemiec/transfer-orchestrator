@@ -1,13 +1,13 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://root:example@mongo:27017
+      uri: ${MONGO_URL}
 
 payin:
   lock:
-    url: "http://payin:8090/lock"
+    url: "${PAYIN_URL}/lock"
   capture:
-    url: "http://payin:8090/capture"
+    url: "${PAYIN_URL}/capture"
 
 payout:
   baseUrl: "http://payout:8091"
