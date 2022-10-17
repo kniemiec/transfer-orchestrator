@@ -1,33 +1,33 @@
 version: "3.3"
 
 services:
-#  transfer-orchestrator:
-#    image: transfer-orchestrator
-#    build: .
-#    ports:
-#      - "8080:8080"
-#      - "9090:9090"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: dev
-#    depends_on:
-#      - payin
-#      - payout
-#    extra_hosts:
-#      - "host.docker.internal:host-gateway"
+  transfer-orchestrator:
+    image: transfer-orchestrator
+    build: .
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    depends_on:
+      - payin
+      - payout
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-#  payin:
-#    image: payin
-#    ports:
-#      - "8090:8090"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: dev
-#
-#  payout:
-#    image: payout
-#    ports:
-#      - "8091:8091"
-#    environment:
-#      SPRING_PROFILES_ACTIVE: dev
+  payin:
+    image: payin
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+
+  payout:
+    image: payout
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
 
   mongo:
     image: mongo

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payout-service
+spec:
+  selector:
+    app: payout
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8091
+      targetPort: 8091
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payout
+  labels:
+    app: payout
+spec:
+  selector:
+    matchLabels:
+      app: payout
+  template:
+    metadata:
+      labels:
+        app: payout
+    spec:
+      dnsPolicy: "ClusterFirst"
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+      containers:
+        - name: payin
+          image: localhost:32000/payout:latest
+          ports:
+            - name: http
+              containerPort: 8091
+              hostPort: 8091
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+            - name: MONGO_URL
+              value: mongodb+srv://kniemiec:82e07B2VrahrY0iF@kniemiec-gcp-tests.r8lkfjh.mongodb.net/?retryWrites=true&w=majority
+            - name: ORCHESTRATOR_GRPC_HOST
+              value: http://10.152.183.22
+            - name: ORCHESTRATOR_GRPC_PORT
+              value: 9090
