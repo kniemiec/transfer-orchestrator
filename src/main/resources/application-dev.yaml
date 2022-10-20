@@ -10,11 +10,11 @@ payin:
     url: "${PAYIN_URL}/capture"
 
 payout:
-  baseUrl: "http://payout:8091"
+  baseUrl: "${PAYOUT_URL}"
   path:
     topup: "/v1/topup"
     stream: "/v1/topups/stream"
 
 compliance:
   check:
-    url: "http://host.docker.internal:31144/checkCompliance"
+    url: "${COMPLIANCE_URL}/checkCompliance"

@@ -5,25 +5,30 @@ spring:
   data:
     mongodb:
       host: localhost
-      port: 27020
+      port: 27021
       database: local
 
 payin:
   lock:
-    url: "http://localhost:8090/lock"
+    url: "http://localhost:8999/lock"
   capture:
-    url: "http://localhost:8090/capture"
+    url: "http://localhost:8999/capture"
 
 payout:
-  baseUrl: "http://localhost:8090"
+  baseUrl: "http://localhost:8999"
   path:
     topup: "/v1/topup"
     stream: "/v1/topups/stream"
 
 
+
 compliance:
-  host: "localhost"
-  port: "9091"
+  check:
+    url: "http://localhost:8999/checkCompliance"
+
+#compliance:
+#  host: "localhost"
+#  port: "9091"
 
 
 grpc:

@@ -38,7 +38,11 @@ public class DefaultPayOut implements PayOut {
     }
 
     @Override
-    public Mono<TopUpResponse> topUp(Money money, String transferId, String senderId, String recipientId) {
+    public Mono<TopUpResponse> topUp(TransferData transferData) {
+        Money money = transferData.getMoney();
+        String transferId = transferData.getTransferId();
+        String senderId = transferData.getSenderId();
+        String recipientId = transferData.getRecipientId();
         TopUpData topUpData = TopUpData.from(UUID.fromString(transferId), senderId, recipientId, money);
         return payOutWebClient
                 .post()

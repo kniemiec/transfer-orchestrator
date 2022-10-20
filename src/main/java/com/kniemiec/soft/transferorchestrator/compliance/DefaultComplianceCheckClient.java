@@ -30,7 +30,8 @@ public class DefaultComplianceCheckClient implements ComplianceCheckService {
                         .transferId(transferId)
                         .build();
 
-        return complianceWebClient.put()
+        return complianceWebClient
+                .put()
                 .uri(complianceCheckUrl)
                 .bodyValue(request)
                 .retrieve()

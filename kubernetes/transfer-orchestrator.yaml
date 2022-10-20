@@ -32,7 +32,9 @@ spec:
             - name: PAYIN_URL
               value: http://10.152.183.145:8090
             - name: PAYOUT_URL
-              value: http://10.152.183.145:8091
+              value: http://10.152.183.254:8091
+            - name: COMPLIANCE_URL
+              value: http://10.152.183.228:8092
             - name: MONGO_URL
               value: mongodb+srv://kniemiec:82e07B2VrahrY0iF@kniemiec-gcp-tests.r8lkfjh.mongodb.net/?retryWrites=true&w=majority
 ---
@@ -61,4 +63,3 @@ spec:
     - protocol: TCP
       port: 9090
       targetPort: 9090
-

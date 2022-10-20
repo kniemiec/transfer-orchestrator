@@ -21,16 +21,20 @@ public class StartTransferExecutor {
 
     private final TransferProcessor transferProcessor;
 
+    private final TransferIdGenerator transferIdGenerator;
+
     public StartTransferExecutor(DataTransferRepository dataTransferRepository,
                                  PayIn payIn,
-                                 TransferProcessor transferProcessor){
+                                 TransferProcessor transferProcessor,
+                                 TransferIdGenerator transferIdGenerator){
         this.dataTransferRepository = dataTransferRepository;
         this.payin = payIn;
         this.transferProcessor = transferProcessor;
+        this.transferIdGenerator = transferIdGenerator;
     }
 
     public Mono<UUID> tryStartTransfer(TransferCreationData transferCreationData) {
-        UUID transferId = UUID.randomUUID();
+        UUID transferId = transferIdGenerator.generateTransferId();
         return dataTransferRepository
                 .save(transferCreationData.toNewTransferData(transferId))
                 .flatMap(transferData -> payin.lock(transferData.getMoney(), transferData.getSenderId())

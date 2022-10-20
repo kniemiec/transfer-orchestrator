@@ -27,10 +27,13 @@ public class AuthorizationExecutor {
 
     public void initializeAuthorizationFlow(){
         this.transferProcessor.exposeQueue()
+                .log()
                 .filter( transferData -> transferData.getStatus().equals(Status.LOCKED))
+                .log()
                 .subscribe( lockedTransfer -> complianceCheckService.check(lockedTransfer.getTransferId(), lockedTransfer.getSender(), lockedTransfer.getRecipient())
 //                        TODO - send this to DQL - DLQ needs to be created
 //                        .switchIfEmpty( status->  dataTransferRepository.save(lockedTransfer.withStatus(Status.COMPLIANCE_ALERT))
+                        .log()
                         .filter(complianceStatus -> complianceStatus)
                         .map(newTransferData -> lockedTransfer.withStatus(Status.COMPLIANCE_OK))
                         .flatMap(dataTransferRepository::save)
