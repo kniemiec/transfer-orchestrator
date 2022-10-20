@@ -23,7 +23,6 @@ class CaptureExecutorTest {
 
     private CaptureExecutor underTest;
 
-
     private DataTransferRepository dataTransferRepository;
 
     private PayIn payin;

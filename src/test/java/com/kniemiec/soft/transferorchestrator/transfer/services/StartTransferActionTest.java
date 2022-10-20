@@ -31,15 +31,19 @@ class StartTransferActionTest {
 
     private TransferProcessor transferProcessor;
 
+    private TransferIdGenerator transferIdGenerator;
+
     @BeforeEach
     public void setUp(){
         dataTransferRepositoryMock = Mockito.mock(DataTransferRepository.class);
         payInMock = Mockito.mock(DefaultPayIn.class);
         transferProcessor = new TransferProcessor();
+        transferIdGenerator = new DefaultTransferIdGenerator();
         underTest = new StartTransferExecutor(
             dataTransferRepositoryMock,
                 payInMock,
-                transferProcessor
+                transferProcessor,
+                transferIdGenerator
         );
     }
 

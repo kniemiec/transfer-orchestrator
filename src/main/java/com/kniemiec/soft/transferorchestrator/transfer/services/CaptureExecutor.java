@@ -28,15 +28,21 @@ public class CaptureExecutor {
     }
 
 
-    public void initializeCaptureFlow(){
+    private void initializeCaptureFlow(){
         this.transferProcessor.exposeQueue()
+                .log()
                 .filter( transferData -> transferData.getStatus().equals(Status.COMPLIANCE_OK))
+                .log()
                 .subscribe( complianceVerifiedTransfer -> payin.capture(complianceVerifiedTransfer.getLockId())
+                        .log()
                         .filter( captureResponse -> captureResponse.getStatus().equals(CaptureStatus.CAPTURED))
+                        .log()
                         .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while capturing transfer "+complianceVerifiedTransfer.getTransferId())))
                         .map(newTransferData -> complianceVerifiedTransfer.withStatus(Status.CAPTURED))
+                        .log()
                         .flatMap(dataTransferRepository::save)
-                        .subscribe(transferProcessor::addToQueue));
+                                .subscribe( element -> System.out.println("element: "+element.getTransferId())));
+//                        .subscribe(transferProcessor::addToQueue));
     }
 
 
