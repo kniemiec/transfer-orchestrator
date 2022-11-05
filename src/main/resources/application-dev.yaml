@@ -18,3 +18,7 @@ payout:
 compliance:
   check:
     url: "${COMPLIANCE_URL}/checkCompliance"
+
+grpc:
+  server:
+    port: ${e}

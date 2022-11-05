@@ -29,9 +29,12 @@ public class TopUpExecutor {
 
     private void initializeTopUpFlow(){
         this.transferProcessor.exposeQueue()
+                .log()
                 .filter( transferData -> transferData.getStatus().equals(Status.CAPTURED))
+                .log()
                 .subscribe( capturedTransfer -> payOut.topUp(capturedTransfer)
                         .filter( response -> response.getStatus().equals(TopUpStatus.CREATED))
+                        .log()
                         .switchIfEmpty( Mono.error(new TransferInitializationFailedException("Error while delivering transfer "+capturedTransfer.getTransferId())))
                         .map(newTransferData -> capturedTransfer.withStatus(Status.TOP_UP_STARTED))
                         .flatMap(dataTransferRepository::save)

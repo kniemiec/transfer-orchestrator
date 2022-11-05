@@ -24,8 +24,9 @@ spec:
             - name: http
               containerPort: 8080
               hostPort: 8080
-            - name: grpc
-              containerPort: 9090
+            - name: grpc-server
+              containerPort: 9999
+              hostPort: 9999
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: dev
@@ -37,6 +38,21 @@ spec:
               value: http://10.152.183.228:8092
             - name: MONGO_URL
               value: mongodb+srv://kniemiec:82e07B2VrahrY0iF@kniemiec-gcp-tests.r8lkfjh.mongodb.net/?retryWrites=true&w=majority
+            - name: GRPC_SERVER_PORT
+              value: "9999"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transfer-orchestrator-service
+spec:
+  selector:
+    app: orchestration
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 9999
+      targetPort: 9999
 ---
 apiVersion: v1
 kind: Service
@@ -50,16 +66,4 @@ spec:
     - port: 8080
       targetPort: 8080
       nodePort: 32080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: transfer-orchestrator-service
-spec:
-  selector:
-    app: transfer-orchestrator
-  type: ClusterIP
-  ports:
-    - protocol: TCP
-      port: 9090
-      targetPort: 9090
+      name: http

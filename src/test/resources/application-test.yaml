@@ -20,17 +20,11 @@ payout:
     topup: "/v1/topup"
     stream: "/v1/topups/stream"
 
-
-
 compliance:
   check:
     url: "http://localhost:8999/checkCompliance"
 
-#compliance:
-#  host: "localhost"
-#  port: "9091"
-
 
 grpc:
   server:
-    port: 9999
+    port: 9998

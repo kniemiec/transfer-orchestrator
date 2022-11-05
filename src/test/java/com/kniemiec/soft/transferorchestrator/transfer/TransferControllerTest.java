@@ -23,7 +23,8 @@ public class TransferControllerTest {
     @BeforeEach
     void setUp(){
         startTransferExecutor = Mockito.mock(StartTransferExecutor.class);
-        transferController = new TransferController(startTransferExecutor, new TransferProcessor());
+        transferController = new TransferController(startTransferExecutor,
+                new TransferProcessor());
     }
 
 

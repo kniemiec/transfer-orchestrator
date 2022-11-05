@@ -41,8 +41,7 @@ public class CaptureExecutor {
                         .map(newTransferData -> complianceVerifiedTransfer.withStatus(Status.CAPTURED))
                         .log()
                         .flatMap(dataTransferRepository::save)
-                                .subscribe( element -> System.out.println("element: "+element.getTransferId())));
-//                        .subscribe(transferProcessor::addToQueue));
+                        .subscribe(transferProcessor::addToQueue));
     }
 
 
