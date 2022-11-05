@@ -4,8 +4,8 @@ spring:
       on-profile: local
   data:
     mongodb:
-      uri: mongodb://root:example@localhost:27017
-
+#      uri: mongodb://root:example@localhost:27017
+      uri: mongodb+srv://kniemiec:82e07B2VrahrY0iF@kniemiec-gcp-tests.r8lkfjh.mongodb.net/?retryWrites=true&w=majority
 payin:
   lock:
     url: "http://localhost:8090/lock"
@@ -20,3 +20,7 @@ payout:
 compliance:
   check:
     url: "http://localhost:31144/checkCompliance"
+
+grpc:
+  server:
+    port: 9999

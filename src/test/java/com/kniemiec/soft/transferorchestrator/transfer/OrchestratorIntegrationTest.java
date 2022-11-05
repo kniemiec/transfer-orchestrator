@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
+import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
 import com.kniemiec.soft.transferorchestrator.transfer.services.TransferIdGenerator;
 import org.junit.jupiter.api.Test;
@@ -106,11 +107,11 @@ public class OrchestratorIntegrationTest {
                 MockData.mockCaptureResponse(lockId,CaptureStatus.CAPTURED)
         )));
 
-//        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
-//                MockData.mockTopUpResponseData(lockId,
-//                        transferCreationData.getMoney(),
-//                        TopUpStatus.COMPLETED)
-//        ).withFixedDelay(2000)));
+        stubFor(post("/v1/topup").willReturn(ResponseDefinitionBuilder.okForJson(
+                MockData.mockTopUpResponseData(lockId,
+                        transferCreationData.getMoney(),
+                        TopUpStatus.CREATED)
+        )));
 
         List<UUID> receivedTransferIds = new ArrayList<>();
 
@@ -137,7 +138,9 @@ public class OrchestratorIntegrationTest {
 
 
         // then
-//        verify(postRequestedFor(urlPathEqualTo("/lock")));
+        verify(postRequestedFor(urlPathEqualTo("/lock")));
+        verify(postRequestedFor(urlPathEqualTo("/capture")));
+        verify(postRequestedFor(urlPathEqualTo("/v1/topup")));
 
 
         webTestClient.get()
@@ -148,7 +151,7 @@ public class OrchestratorIntegrationTest {
                 .expectBody(TransferStatus.class)
                 .consumeWith( response -> {
                     var transferStatus = response.getResponseBody();
-                    assertEquals(Status.CAPTURED, transferStatus.getStatus());
+                    assertEquals(Status.TOP_UP_STARTED, transferStatus.getStatus());
                     assertEquals(transferStatus.getTransferId(), transferId);
                 });
     }

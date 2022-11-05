@@ -8,8 +8,12 @@ payout:
   baseUrl: "http://localhost:8091"
   path:
     topup: "/v1/topup"
-    stream: "/1/topups/stream"
+    stream: "/v1/topups/stream"
 
 compliance:
   check:
     url: "http://localhost:31144/checkCompliance"
+
+grpc:
+  server:
+    port: 9999
