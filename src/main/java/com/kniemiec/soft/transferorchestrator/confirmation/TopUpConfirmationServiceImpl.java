@@ -45,6 +45,5 @@ public class TopUpConfirmationServiceImpl extends TopUpConfirmationServiceGrpc.T
                     responseObserver.onNext(response);
                     responseObserver.onCompleted();
                 });
-//        response.filter()
     }
 }
