@@ -21,4 +21,4 @@ compliance:
 
 grpc:
   server:
-    port: ${e}
+    port: ${GRPC_SERVER_PORT}
