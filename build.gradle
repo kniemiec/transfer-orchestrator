@@ -52,6 +52,13 @@ dependencies {
     implementation "io.grpc:grpc-netty:${grpcVersion}"
    compileOnly 'jakarta.annotation:jakarta.annotation-api:1.3.5'
 
+    // sleuth
+    implementation 'org.springframework.cloud:spring-clout-starter-sleuth' {
+        exclude group: 'org.springframework.cloud', module: 'spring-cloud-sleuth-brave'
+    }
+    implementation 'org.springframework.cloud:pring-cloud-sleuth-otel-autoconfigure'
+    implementation 'io.opentelemetry:pentelemetry-exporter-otlp-trace'
+
     // protobuf server
 //    compileOnly('org.springframework.boot:spring-boot-starter')
 //    compileOnly group: 'com.google.protobuf', name: 'protobuf-java', version: '3.10.0'
