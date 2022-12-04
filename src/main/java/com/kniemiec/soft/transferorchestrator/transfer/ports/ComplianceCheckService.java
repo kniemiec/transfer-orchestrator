@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.compliance;
+package com.kniemiec.soft.transferorchestrator.transfer.ports;
 
 import com.kniemiec.soft.transferorchestrator.transfer.model.User;
 import reactor.core.publisher.Mono;

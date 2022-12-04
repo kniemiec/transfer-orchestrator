@@ -4,6 +4,7 @@ import com.kniemiec.soft.transferorchestrator.compliance.model.ComplianceRequest
 import com.kniemiec.soft.transferorchestrator.compliance.model.ComplianceResponse;
 import com.kniemiec.soft.transferorchestrator.compliance.model.ComplianceStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.User;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.ComplianceCheckService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

@@ -1,17 +1,14 @@
 package com.kniemiec.soft.transferorchestrator.transfer;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
-import com.github.tomakehurst.wiremock.matching.UrlPattern;
 import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureStatus;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
 import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.model.*;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.services.TransferIdGenerator;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;

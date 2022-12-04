@@ -1,6 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.payin;
 
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.PayIn;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class DefaultPayInTest {
 

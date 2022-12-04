@@ -4,7 +4,7 @@ package com.kniemiec.soft.transferorchestrator.confirmation;
 import com.kniemiec.soft.transferorchestrator.topup.TopUpConfirmationServiceGrpc;
 import com.kniemiec.soft.transferorchestrator.topup.TopUpRequest;
 import com.kniemiec.soft.transferorchestrator.topup.TopUpResponse;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import io.grpc.stub.StreamObserver;

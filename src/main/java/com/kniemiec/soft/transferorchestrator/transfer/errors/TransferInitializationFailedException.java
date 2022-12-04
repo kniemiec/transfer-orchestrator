@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.transfer;
+package com.kniemiec.soft.transferorchestrator.transfer.errors;
 
 public class TransferInitializationFailedException extends RuntimeException {
 

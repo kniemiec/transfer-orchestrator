@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator;
+package com.kniemiec.soft.transferorchestrator.transfer.services;
 
 import com.kniemiec.soft.transferorchestrator.confirmation.TopUpConfirmationServiceImpl;
 import io.grpc.Server;

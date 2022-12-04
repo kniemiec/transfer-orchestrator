@@ -261,7 +261,7 @@ Caused by: java.net.ConnectException: Connection refused
 2022-02-05 08:55:36.861 DEBUG 1 --- [           main] o.s.data.convert.CustomConversions       : Adding converter from class java.lang.String to class java.time.Instant as reading converter.
 2022-02-05 08:55:36.889 DEBUG 1 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Autowiring by type from bean name 'reactiveMongoTemplate' via factory method to bean named 'reactiveMongoDbFactory'
 2022-02-05 08:55:36.889 DEBUG 1 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Autowiring by type from bean name 'reactiveMongoTemplate' via factory method to bean named 'mappingMongoConverter'
-2022-02-05 08:55:36.936 DEBUG 1 --- [           main] o.s.d.r.c.s.RepositoryFactorySupport     : Initializing repository instance for com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository…
+2022-02-05 08:55:36.936 DEBUG 1 --- [           main] o.s.d.r.c.s.RepositoryFactorySupport     : Initializing repository instance for com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository…
 2022-02-05 08:55:36.974 DEBUG 1 --- [           main] o.s.d.r.c.s.RepositoryFactorySupport     : Finished creation of repository instance for {}.
 2022-02-05 08:55:36.976 DEBUG 1 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Autowiring by type from bean name 'transferOrchestratorApplication' via constructor to bean named 'dataTransferRepository'
 2022-02-05 08:55:36.977 DEBUG 1 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'payoutConfiguration'

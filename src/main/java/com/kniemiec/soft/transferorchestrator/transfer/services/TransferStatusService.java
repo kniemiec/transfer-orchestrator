@@ -1,6 +1,6 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
 import org.springframework.stereotype.Component;

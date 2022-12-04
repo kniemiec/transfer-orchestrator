@@ -2,10 +2,10 @@ package com.kniemiec.soft.transferorchestrator.transfer.services;
 
 import com.kniemiec.soft.transferorchestrator.MockData;
 import com.kniemiec.soft.transferorchestrator.payin.DefaultPayIn;
-import com.kniemiec.soft.transferorchestrator.payin.PayIn;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;

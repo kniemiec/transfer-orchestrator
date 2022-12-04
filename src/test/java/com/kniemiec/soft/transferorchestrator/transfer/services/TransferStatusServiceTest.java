@@ -1,7 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
 import com.kniemiec.soft.transferorchestrator.MockData;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import org.junit.jupiter.api.BeforeEach;

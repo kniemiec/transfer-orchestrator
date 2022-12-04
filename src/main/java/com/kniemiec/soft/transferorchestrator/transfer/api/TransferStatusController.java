@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.transfer;
+package com.kniemiec.soft.transferorchestrator.transfer.api;
 
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.services.TransferStatusService;

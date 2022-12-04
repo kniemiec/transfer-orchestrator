@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.transfer;
+package com.kniemiec.soft.transferorchestrator.transfer.errors;
 
 public class TransferComplianceCheckException extends RuntimeException{
     private String message;

@@ -1,15 +1,14 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
 import com.kniemiec.soft.transferorchestrator.MockData;
-import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.ComplianceCheckService;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import reactor.core.publisher.Mono;
 

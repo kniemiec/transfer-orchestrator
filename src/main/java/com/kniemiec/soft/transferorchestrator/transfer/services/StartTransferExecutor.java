@@ -1,9 +1,9 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
-import com.kniemiec.soft.transferorchestrator.payin.PayIn;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.PayIn;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockStatus;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
-import com.kniemiec.soft.transferorchestrator.transfer.TransferInitializationFailedException;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.errors.TransferInitializationFailedException;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;

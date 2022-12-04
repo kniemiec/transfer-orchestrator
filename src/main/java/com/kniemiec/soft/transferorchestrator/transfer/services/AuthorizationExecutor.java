@@ -1,7 +1,7 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
-import com.kniemiec.soft.transferorchestrator.compliance.ComplianceCheckService;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.ComplianceCheckService;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import org.springframework.stereotype.Component;

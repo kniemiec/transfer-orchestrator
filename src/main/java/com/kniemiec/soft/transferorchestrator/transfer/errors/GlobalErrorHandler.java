@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.errorhandler;
+package com.kniemiec.soft.transferorchestrator.transfer.errors;
 
 import com.kniemiec.soft.transferorchestrator.payin.PayOutClientException;
 import lombok.extern.slf4j.Slf4j;

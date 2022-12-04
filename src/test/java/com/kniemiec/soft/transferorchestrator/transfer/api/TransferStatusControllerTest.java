@@ -1,6 +1,7 @@
-package com.kniemiec.soft.transferorchestrator.transfer;
+package com.kniemiec.soft.transferorchestrator.transfer.api;
 
 import com.kniemiec.soft.transferorchestrator.MockData;
+import com.kniemiec.soft.transferorchestrator.transfer.api.TransferStatusController;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.services.TransferStatusService;

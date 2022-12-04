@@ -1,9 +1,9 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
-import com.kniemiec.soft.transferorchestrator.payout.PayOut;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.PayOut;
 import com.kniemiec.soft.transferorchestrator.payout.model.TopUpStatus;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
-import com.kniemiec.soft.transferorchestrator.transfer.TransferInitializationFailedException;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.errors.TransferInitializationFailedException;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import org.springframework.stereotype.Component;

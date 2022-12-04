@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.payin;
+package com.kniemiec.soft.transferorchestrator.transfer.ports;
 
 import com.kniemiec.soft.transferorchestrator.payin.model.CaptureResponse;
 import com.kniemiec.soft.transferorchestrator.payin.model.LockResponse;

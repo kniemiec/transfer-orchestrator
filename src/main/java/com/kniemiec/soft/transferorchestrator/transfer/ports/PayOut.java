@@ -1,4 +1,4 @@
-package com.kniemiec.soft.transferorchestrator.payout;
+package com.kniemiec.soft.transferorchestrator.transfer.ports;
 
 import com.kniemiec.soft.transferorchestrator.payout.model.TopUpResponse;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferData;

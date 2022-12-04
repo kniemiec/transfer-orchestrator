@@ -2,6 +2,7 @@ package com.kniemiec.soft.transferorchestrator.payin;
 
 import com.kniemiec.soft.transferorchestrator.payin.model.*;
 import com.kniemiec.soft.transferorchestrator.transfer.model.Money;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.PayIn;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

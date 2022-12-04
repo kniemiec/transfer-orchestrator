@@ -1,9 +1,8 @@
 package com.kniemiec.soft.transferorchestrator.transfer.services;
 
-import com.kniemiec.soft.transferorchestrator.payin.DefaultPayIn;
 import com.kniemiec.soft.transferorchestrator.payout.DefaultPayOut;
-import com.kniemiec.soft.transferorchestrator.payout.PayOut;
-import com.kniemiec.soft.transferorchestrator.transfer.DataTransferRepository;
+import com.kniemiec.soft.transferorchestrator.transfer.ports.PayOut;
+import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

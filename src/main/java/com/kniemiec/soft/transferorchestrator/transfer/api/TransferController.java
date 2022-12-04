@@ -1,5 +1,6 @@
-package com.kniemiec.soft.transferorchestrator.transfer;
+package com.kniemiec.soft.transferorchestrator.transfer.api;
 
+import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferCreationData;
 import com.kniemiec.soft.transferorchestrator.transfer.model.TransferStatus;
 import com.kniemiec.soft.transferorchestrator.transfer.services.StartTransferExecutor;
@@ -20,7 +21,7 @@ public class TransferController {
 
     private final StartTransferExecutor startTransferExecutor;
 
-    private final  TransferProcessor transferProcessor;
+    private final TransferProcessor transferProcessor;
 
     public TransferController(StartTransferExecutor startTransferExecutor,
                               TransferProcessor transferProcessor){
