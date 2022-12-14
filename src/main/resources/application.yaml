@@ -7,7 +7,7 @@ spring:
         trace-id-ratio-based: 1.0
       exporter:
         otlp:
-          endpoint: http://otel-collector:4317
+          endpoint: http://localhost:32317
 
 
 payin:

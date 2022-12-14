@@ -53,11 +53,11 @@ dependencies {
    compileOnly 'jakarta.annotation:jakarta.annotation-api:1.3.5'
 
     // sleuth
-//    implementation 'org.springframework.cloud:spring-clout-starter-sleuth' {
-//        exclude group: 'org.springframework.cloud', module: 'spring-cloud-sleuth-brave'
-//    }
-//    implementation 'org.sprngframework.cloud:pring-cloud-sleuth-otel-autoconfigure'
-//    implementation 'io.opentelemetry:pentelemetry-exporter-otlp-trace'
+    implementation('org.springframework.cloud:spring-cloud-starter-sleuth:3.1.5') {
+        exclude group: 'org.springframework.cloud', module: 'spring-cloud-sleuth-brave'
+    }
+    implementation 'org.springframework.cloud:spring-cloud-sleuth-otel-autoconfigure:1.1.0'
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp-trace:1.14.0'
 
     // protobuf server
 //    compileOnly('org.springframework.boot:spring-boot-starter')
