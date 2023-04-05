@@ -1,58 +1,79 @@
 version: "3.3"
 
 services:
-  transfer-orchestrator:
-    image: transfer-orchestrator
-    build: .
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
     ports:
-      - "8080:8080"
-      - "9090:9090"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-    depends_on:
-      - payin
-      - payout
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "16686:16686"
+      - "14268"
+      - "14250"
 
-  payin:
-    image: payin
-    ports:
-      - "8090:8090"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-
-  payout:
-    image: payout
-    ports:
-      - "8091:8091"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-
-  mongo:
-    image: mongo
-    restart: always
-    container_name: mongo
-    environment:
-      MONGO_INITDB_DATABASE: transferdb
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_USERNAME: user
-      MONGO_INITDB_PASSWORD: user
-    ports:
-      - "27017:27017"
+  otel-collector:
+    image: otel/opentelemetry-collector:0.47.0
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
     volumes:
-      - mongodata:/data/db
-    command: ["--bind_ip_all"]
-
-  mongo-express:
-    image: mongo-express
-    restart: always
+      - ./otel-config.yaml:/etc/otel-collector-config.yaml
     ports:
-      - "8081:8081"
-    environment:
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      - "1888:1888"   # pprof extension
+      - "13133:13133" # health_check extension
+      - "4317"        # OTLP gRPC receiver
+      - "55670:55679" # zpages extension
+      - "4317:4317"   # for external service
+    depends_on:
+      - jaeger-all-in-one
 
+#  transfer-orchestrator:
+#    image: transfer-orchestrator
+#    build: .
+#    ports:
+#      - "8080:8080"
+#      - "9090:9090"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: dev
+#    depends_on:
+#      - payin
+#      - payout
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#
+#  payin:
+#    image: payin
+#    ports:
+#      - "8090:8090"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: dev
+#
+#  payout:
+#    image: payout
+#    ports:
+#      - "8091:8091"
+#    environment:
+#      SPRING_PROFILES_ACTIVE: dev
 
-volumes:
-  mongodata:
+#  mongo:
+#    image: mongo
+#    restart: always
+#    container_name: mongo
+#    environment:
+#      MONGO_INITDB_DATABASE: transferdb
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: example
+#      MONGO_INITDB_USERNAME: user
+#      MONGO_INITDB_PASSWORD: user
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongodata:/data/db
+#    command: ["--bind_ip_all"]
+#
+#  mongo-express:
+#    image: mongo-express
+#    restart: always
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+#
+#
+#volumes:
+#  mongodata:
