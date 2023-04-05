@@ -1,19 +1,14 @@
 package com.kniemiec.soft.transferorchestrator.confirmation;
 
-// generate unit tests for class com.kniemiec.soft.transferorchestrator.confirmation.TopUpConfirmationServiceImpl
-// using JUnit 4
 
-import com.kniemiec.soft.transferorchestrator.topup.TopUpConfirmationServiceGrpc;
 import com.kniemiec.soft.transferorchestrator.topup.TopUpRequest;
 import com.kniemiec.soft.transferorchestrator.topup.TopUpResponse;
 import com.kniemiec.soft.transferorchestrator.transfer.persistence.DataTransferRepository;
 import com.kniemiec.soft.transferorchestrator.transfer.TransferProcessor;
-import com.kniemiec.soft.transferorchestrator.transfer.model.Status;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import reactor.core.publisher.Mono;
